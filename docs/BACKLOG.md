@@ -42,6 +42,22 @@ These are the founder-committed product features for the standalone product, cap
 |---|---|---|---|---|
 | **F1** | Auto-sweep ability triggered by simple user instruction | **HIGH (Phase 2)** | User runs e.g. `aiskill-advisor sweep` or types `/sweep` and the tool scans installed Claude Code plugins (gstack, vercel, superpowers, etc.) + pre-populates the manifest with discovered skills. User reviews + accepts/rejects each. | Already drafted as `auto_discovery` placeholder in `prototypes/manifest-schema-draft.yaml` (Section 8) — elevate from draft to designed-and-built. Per-ecosystem adapter pattern needed (gstack/vercel/superpowers each package skills differently). |
 | **F2** | Skill artifact distribution + one-command install | **HIGH (Phase 5)** | User runs ONE command — e.g. `npx aiSkillAdvisor init` OR `claude-code skill install aiSkillAdvisor` — and gets: (a) the advisor memory installed, (b) a starter project profile, (c) the slash command `/aiSkillAdvisor` available, (d) onboarding wizard launched. | Probably both a Claude Code plugin AND an npm package. Package the skill artifact so it can be added to a user's environment in a single step. Adoption blocker without this. |
+| **F11** | **On-demand plugin install (close the loop — don't punt to the human)** | **HIGH (Phase 4-5)** | When the advisor identifies a needed skill that isn't installed, it INSTALLS it (with permission) end-to-end, then confirms it actually loaded — instead of telling a non-technical user "go install this plugin." Pairs with F10's "Fetch from URL" (that workflow needs a real install backend) and is a precondition for F1 auto-sweep being useful (sweeping without installing is window-shopping). | **Founder mandate 2026-06-02:** *"the whole point is that I'm a non-technical person — I have no clue how to install this plug-in."* "Ask the human to install" defeats the advisor's purpose. **The Claude Code plugin install motion is 5 steps + a restart, NOT 4** (corrected 2026-06-02 after a silent-failure bug — see acceptance criteria). |
+
+**F11 — install motion (corrected reference, Claude Code / `~/.claude/plugins/`):**
+
+1. Clone the marketplace repo → `~/.claude/plugins/marketplaces/<marketplace>/`
+2. Copy the plugin subdir → `~/.claude/plugins/cache/<marketplace>/<plugin>/<version>/` (incl. `.claude-plugin/` and `skills/`)
+3. Add the marketplace to `~/.claude/plugins/known_marketplaces.json`
+4. Add the plugin to `~/.claude/plugins/installed_plugins.json`
+5. **Add `"<plugin>@<marketplace>": true` to `enabledPlugins` in `~/.claude/settings.json`** ← the step the first attempt missed; without it the plugin is registered + on disk but NEVER activates
+6. **Restart required** — plugin skill discovery happens once at harness startup; there is no mid-session hot-load (confirmed: `Skill()` returned `Unknown skill` after steps 1-4 even with all files present)
+
+**F11 — acceptance criteria (from the 2026-06-02 silent-failure bug):**
+
+- MUST write the `enabledPlugins` flag, not just register + copy files
+- MUST detect that a restart is required and tell the user **in plain language** ("Installed — restart Claude Code for it to take effect"), never report bare "installed"
+- SHOULD verify post-restart that the target skill actually resolves, and surface a clear failure if it doesn't — **a silently-ignored install is worse than no install** (every artifact said "installed" while the skill could not run; worst failure mode for a non-technical user)
 
 ### Onboarding (CRITICAL for non-tech audience)
 

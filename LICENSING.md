@@ -10,9 +10,11 @@
 
 **aiSkillAdvisor is free for any non-commercial use.** If you use it for personal projects, learning, research, education, hobbyist work, or non-profit/charitable purposes, you owe nothing and need no agreement with us.
 
-**If you want to use aiSkillAdvisor commercially, you need a separate agreement** with the maintainer (Raghu Akula). Commercial use means: use by a for-profit business or individual that generates (or intends to generate) revenue from work involving aiSkillAdvisor.
+**If you want to use aiSkillAdvisor commercially, you need a separate agreement** with the maintainer (Raghu Akula). Commercial use means **any use that is not a permitted non-commercial purpose under the [`LICENSE`](./LICENSE)** — in particular, any use by or for a for-profit business or individual (including internal tooling), regardless of whether that specific use directly generates revenue.
 
 To start a commercial conversation, **open a GitHub Issue at [`github.com/AmRaghuAkula/aiSkillAdvisor/issues`](https://github.com/AmRaghuAkula/aiSkillAdvisor/issues) and tag `@AmRaghuAkula`** for general questions, OR use a private channel (see "How to start a commercial conversation" below) for deal terms you don't want public.
+
+> **No warranty:** aiSkillAdvisor is provided *as-is*, with no warranty, and the maintainer isn't liable for damages — see the [`LICENSE`](./LICENSE)'s *No Liability* section.
 
 ---
 
@@ -23,7 +25,7 @@ You can use aiSkillAdvisor freely, with no payment or written agreement, for any
 - ✅ **Personal projects** — your own side projects, hobbies, learning experiments
 - ✅ **Research** — academic, scientific, or independent research
 - ✅ **Education** — students learning, teachers demonstrating, courses
-- ✅ **Evaluation** — trying out aiSkillAdvisor to see if it fits your needs
+- ✅ **Evaluation** — trying out aiSkillAdvisor to see if it fits your needs. *(A for-profit evaluating for commercial adoption: a reasonable trial is fine — reach out if you need a formal evaluation window before signing a commercial agreement.)*
 - ✅ **Charitable / non-profit / public-good organizations** — per the PolyForm license, registered charities, educational institutions, public research organizations, public-safety/health organizations, environmental organizations, and government institutions can use it freely
 - ✅ **Religious observance** — explicit in the license
 - ✅ **Amateur pursuits** — hobbyist work without monetization intent
@@ -42,13 +44,13 @@ You need a separate commercial agreement with the maintainer for any of these:
 - ❌ **SaaS hosting** — offering aiSkillAdvisor or a derivative as a hosted service
 - ❌ **Consulting use** — using aiSkillAdvisor to deliver paid client work requires an agreement (per-engagement or annual license available)
 
-**Rule of thumb:** if a for-profit business or individual is generating (or intends to generate) revenue from work that uses aiSkillAdvisor, it's commercial use. **Charities, schools, and government bodies are exempt per the PolyForm license, even when grant-funded or fee-charging within their nonprofit purpose.** Open a GitHub Issue to discuss anything unclear.
+**Rule of thumb:** if a for-profit business or individual is using aiSkillAdvisor for anything other than a permitted non-commercial purpose — including unpaid internal tooling — it's commercial use, regardless of whether that specific use directly generates revenue. **Charities, schools, and government bodies are exempt per the PolyForm license, even when grant-funded or fee-charging within their nonprofit purpose.** Open a GitHub Issue to discuss anything unclear.
 
 ---
 
 ## Edge cases — when to ask
 
-These cases are ambiguous. Default: **open a GitHub Issue and ask, rather than assume.** A 24-hour reply is usually all it takes.
+These cases are ambiguous. Default: **open a GitHub Issue and ask, rather than assume.** We aim to reply promptly.
 
 | Situation | Default reading | What to do |
 |---|---|---|
@@ -124,7 +126,7 @@ Looking forward to discussing!
 - **Royalty percentages** are negotiated per inquirer based on use case, scale, and stage. There is no published price list.
 - **Free-tier thresholds** for early-stage startups are discussed during initial conversation; rough guideline: small teams + pre-revenue or low-revenue often qualify for discounted or deferred terms.
 - **Commercial agreement template** — when a commercial inquirer engages, they receive a draft agreement that THEIR lawyers will review before signing. The agreement is the operative legal document for commercial terms.
-- **Future license versions** — we may adopt a different license for future releases. Copies released under PolyForm Noncommercial 1.0.0 remain under that license permanently (Polyform grants are irrevocable for the version released).
+- **Future license versions** — we may adopt a different license for future releases. Copies already released under PolyForm Noncommercial 1.0.0 remain available under that license for that released version — we can't retroactively pull a release back. (Note: the license still terminates if its terms are violated and not cured, or on a patent claim against the software — see the LICENSE's *Violations* and *Patent Defense* sections.)
 
 > The PolyForm Noncommercial 1.0.0 license text is final + in effect. The above describes how commercial-agreement specifics are handled — those are deliberately negotiated, not published.
 
@@ -136,7 +138,7 @@ aiSkillAdvisor is built as a community-good project — designed to help non-tec
 
 1. **Free for individuals + non-profits** keeps the community-good mission intact
 2. **Commercial agreements for businesses** funds ongoing development + maintenance
-3. **No SaaS-clone protection** prevents large companies from forking aiSkillAdvisor into a paid hosted service without compensating the maintainer
+3. **SaaS-clone protection** prevents large companies from forking aiSkillAdvisor into a paid hosted service without compensating the maintainer
 
 This is a **source-available, noncommercial** model — part of a broader trend of sustainability-focused OSS licensing since 2023 (related to but distinct from BUSL/SSPL/Elastic License approaches used by HashiCorp, MongoDB, and Elastic).
 
