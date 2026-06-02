@@ -1,0 +1,144 @@
+---
+# Hobbyist persona — non-commercial AI enthusiast.
+# Archetype: curious learner, weekend tinkerer, follows AI Twitter, wants
+# to feel like an insider. NOT shipping a product. Optimizing for joy and
+# learning, not revenue or velocity.
+
+persona:
+  id: hobbyist
+  name: Hobbyist
+  description: |
+    A non-commercial AI enthusiast. They are NOT trying to ship a SaaS.
+    They are NOT trying to earn revenue. They are here because AI is the
+    most interesting thing happening in tech and they want to play with
+    it on the weekend. They follow AI Twitter, read papers (or paper
+    summaries), and run local models for fun.
+
+    Their satisfaction comes from LEARNING and EXPLORATION, not from a
+    deployed product. They want skills that teach them, show them what's
+    possible, and let them feel like an insider. They have low tolerance
+    for setup tax — if a skill takes 20 minutes to configure for a
+    weekend project, they'll bounce.
+
+    Critically, they should NEVER be pushed toward production-grade safety
+    or shipping skills unprompted — that's not their world and the framing
+    feels alien. Surface those skills only if they explicitly transition
+    to "I want to actually launch this."
+
+  primary_intent: >
+    Have fun, learn something new, and feel like I'm closer to the
+    frontier of what AI can do.
+
+  job_to_be_done: >
+    "Show me what's possible with the AI tools I have, let me play with
+    it without setup tax, and teach me something I didn't know."
+
+  time_budget_per_session: 30        # weekend tinkering, easily interrupted
+  risk_tolerance: high               # nothing at stake — it's a sandbox
+  technical_depth: medium-low        # variable; assume entry-mid level
+
+  primary_work_types:
+    - ai-llm-scoring                 # playing with LLMs for fun
+    - visual-brand                   # generative UI experiments
+
+  skill_weightings:
+    # Exploration + learning — heavily boosted
+    brainstorming: 2.0               # love exploring possibilities
+    frontend-design: 2.0             # generative creative output is FUN
+    design-shotgun: 1.8              # variants = play
+    design-consultation: 1.5
+    design-html: 1.6
+
+    # Local + offline AI — boosted (hobbyists love running stuff locally)
+    huggingface-local-models: 2.0    # running GGUF on their laptop = peak hobbyist
+    huggingface-best: 1.8            # "what model should I use" is THE hobbyist question
+    huggingface-papers: 1.6          # paper-curious
+    huggingface-gradio: 1.7          # weekend demos
+    huggingface-zerogpu: 1.5         # free GPU = catnip
+    huggingface-datasets: 1.4
+    transformers-js: 1.6             # in-browser ML demos
+    huggingface-paper-publisher: 1.2 # aspirational; some hobbyists become researchers
+
+    # Browser + visual play
+    browse: 1.4
+    open-gstack-browser: 1.5
+
+    # Learning meta-skills
+    spec: 1.3                        # learning to scope
+    writing-plans: 1.2               # learning to plan
+
+    # De-prioritized (hobbyist isn't shipping)
+    ship: 0.5                        # they're not deploying
+    autoplan: 0.6
+    cso: 0.4                         # no production, no security risk
+    careful: 0.7                     # nothing to break
+    freeze: 0.5
+    vercel:deploy: 0.7               # MAY deploy a demo; not the primary use
+    vercel:env-vars: 0.6
+    code-review: 0.8                 # nice to learn, not core
+    review: 0.8
+    devex-review: 0.6
+    qa: 0.7
+    health: 0.6
+    retro: 0.5                       # no team, no cadence
+    document-generate: 0.7
+    document-release: 0.5
+    investigate: 0.9
+    benchmark: 0.8
+    dispatching-parallel-agents: 1.0
+
+    # Things that make hobbyists feel like insiders
+    huggingface-trackio: 1.3         # logging training runs feels pro
+    huggingface-llm-trainer: 1.5     # fine-tuning is the hobbyist's "I can fly the spaceship" moment
+    huggingface-vision-trainer: 1.3
+
+  quality_judgment_phrases:
+    # Hobbyists use curiosity + wonder language, not commerce language
+    - "is this possible"
+    - "can I run this locally"
+    - "what model should I use"
+    - "what's the state of the art"
+    - "show me something cool"
+    - "how does this work"
+    - "I want to understand"
+    - "is this on Hugging Face"
+    - "what does the paper say"
+
+  starter_workflow:
+    - Use /huggingface-best to pick a model for the experiment
+    - Use /huggingface-local-models to run it on their laptop OR /huggingface-zerogpu for free GPU
+    - Use /huggingface-gradio to wrap it in a quick UI
+    - Use /frontend-design or /design-shotgun for visual experiments
+    - Use /brainstorming when exploring "what else could I do with this"
+
+  anti_recommendations:
+    - skill: cso
+      reason: There's no production, no real users, no billing — security review framing feels alien and discouraging for a weekend hobby.
+    - skill: ship
+      reason: Hobbyist isn't shipping. Don't impose production discipline on a playground.
+    - skill: freeze
+      reason: Constrains exploration; hobbyists want to roam.
+    - skill: autoplan
+      reason: Too heavyweight for hobby work.
+    - skill: retro
+      reason: No team, no cadence, no point.
+    - skill: devex-review
+      reason: There's no "dev experience" to audit on a personal sandbox.
+    - skill: postman:security
+      reason: No APIs in production to secure.
+    - skill: vercel:vercel-firewall
+      reason: No traffic to firewall.
+    - skill: claude-md-improver
+      reason: Hobby projects don't have CLAUDE.md to maintain — surface only if one is detected.
+
+  onboarding_questions_to_skip:
+    - billing_provider
+    - production_url
+    - team_size
+    - sla_requirements
+    - data_retention_policy
+    - jurisdiction
+    - tos_version
+    - paying_users_count
+    - support_email
+    - stripe_account

@@ -132,6 +132,21 @@ Specific stumble points common in non-tech-user onboarding, with countermeasures
 
 ---
 
+## Carry-forward items from brainstorming agent (2026-06-01)
+
+Agent-1 brainstorming surfaced 4 alternatives that should happen but haven't yet. Tracking here:
+
+| ID | Item | Why valuable | Priority |
+|---|---|---|---|
+| **CF1** | **v0 retrospective from REBRAND-024** | Capture the REASONING behind each refinement (not just what changed). Highest-decay knowledge — fresh now, lost in 2 weeks. | **HIGH** |
+| **CF2** | **Pilot-success rubric** | Define what counts as a "successful pilot" before the 3-pilot gate triggers extraction. Without this, the gate is theater. | **HIGH** |
+| **CF3** | **v0 failure-mode catalogue** | When did v0 NOT fire when it should have during REBRAND-024? Negative evidence shapes v1 more than positive. | **MEDIUM-HIGH** |
+| **CF4** | **CONTRIBUTING.md** for the aiSkillAdvisor repo | Currently no guidance for external contributors; community can't engage. | **MEDIUM** |
+
+These are NOT in the v1 SPEC (because they're either docs or pilot-discipline, not product features). They belong in the next session's TODO.
+
+---
+
 ## Improvisations Queue (candidate refinements)
 
 Items below are CANDIDATES that may become implemented refinements after TDD validation. Not yet applied to v0. Re-evaluate periodically.

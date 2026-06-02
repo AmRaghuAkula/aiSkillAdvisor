@@ -1,0 +1,135 @@
+---
+# Product Manager in Tech persona — manages AI-assisted technical work
+# without writing the code themselves. Strong on planning, requirements,
+# stakeholder language, Jira workflow. Reviews code but doesn't author it.
+
+persona:
+  id: pm-in-tech
+  name: Product Manager in Tech
+  description: |
+    A product manager managing a technical team (or solo AI agents acting
+    as a team). They write requirements, plan sprints, review code without
+    authoring it, and translate between business stakeholders and engineers.
+    They use Jira/Linear daily and want skill suggestions they can paste
+    directly into a ticket as acceptance criteria or implementation notes.
+
+    They DON'T write production code, but they READ a lot of code to verify
+    work matches spec. They care about plans, specs, and reviews more than
+    any other persona. They view "vibe coding" with suspicion — they want
+    explicit plans + explicit verification.
+
+  primary_intent: >
+    Plan, scope, and verify technical work delivered by AI agents or
+    engineers — without becoming the bottleneck.
+
+  job_to_be_done: >
+    "Help me turn a vague stakeholder request into a precise spec, a clear
+    plan, and a verifiable acceptance test — and then verify the result."
+
+  time_budget_per_session: 30          # PMs are interrupted constantly
+  risk_tolerance: medium               # comfortable with calculated bets
+  technical_depth: medium              # reads code fluently; writes rarely
+
+  primary_work_types:
+    - spec-ambiguous
+    - perf-debug                       # for reviewing perf claims
+    - ops-support                      # PM-adjacent
+
+  skill_weightings:
+    # Planning + specs — the PM's bread and butter
+    writing-plans: 2.5                 # highest weight in this persona
+    brainstorming: 2.0                 # explore intent before scoping
+    spec: 2.0                          # vague → executable spec
+
+    # Review-without-writing — heavily boosted
+    code-review: 2.0
+    review: 2.0
+    design-review: 1.7
+    devex-review: 1.6
+    plan-ceo-review: 1.5
+    plan-eng-review: 1.5
+    plan-design-review: 1.5
+    plan-devex-review: 1.5
+
+    # Verification + evidence (PMs hate over-claimed "done")
+    verification-before-completion: 2.0
+    qa: 1.6
+    qa-only: 1.6                       # report-only; doesn't auto-fix
+    browse: 1.5                        # see the feature; don't trust descriptions
+
+    # Investigation + diagnostics (PMs investigate incident causes)
+    investigate: 1.7
+    health: 1.5                        # weekly state-of-the-codebase snapshot
+    retro: 1.6                         # weekly retrospective is PM-native
+
+    # Coordination
+    dispatching-parallel-agents: 1.5   # PMs naturally parallelize work
+    context-save: 1.4                  # for handoff to engineers
+    context-restore: 1.4
+
+    # Light awareness of shipping — but PM rarely ships personally
+    ship: 0.8
+    autoplan: 1.2                      # useful pre-merge sweep PM can trigger
+    careful: 1.3                       # PMs flagging risky merges
+    cso: 1.4                           # PM should know when CSO is needed
+
+    # Doc hygiene
+    claude-md-improver: 1.3
+    document-generate: 1.5
+    document-release: 1.6
+
+    # Less relevant
+    frontend-design: 0.6               # PMs don't generate visuals
+    design-shotgun: 0.7
+    design-html: 0.7
+    design-consultation: 1.0           # they can commission, not execute
+    vercel:deploy: 0.7
+    vercel:env-vars: 0.5               # almost never PM's job
+    vercel:react-best-practices: 0.8
+    vercel:nextjs: 0.8
+    vercel:shadcn: 0.7
+    huggingface-llm-trainer: 0.5
+    benchmark: 1.1                     # to verify perf claims
+
+  quality_judgment_phrases:
+    # PMs use stakeholder/business language more than design language
+    - "acceptance criteria"
+    - "scope"
+    - "out of scope"
+    - "definition of done"
+    - "verifiable"
+    - "edge case"
+    - "what's the actual user impact"
+    - "is this regression-tested"
+    - "does this match the spec"
+    - "stakeholder will ask"
+    - "how do we measure this"
+
+  starter_workflow:
+    - Use /brainstorming to surface unstated requirements
+    - Use /spec to convert vague intent into executable spec
+    - Use /writing-plans to break spec into checkpointed steps
+    - Hand plan to engineer/agent for implementation
+    - Use /code-review + /verification-before-completion on the result
+    - Use /retro at end of cycle
+
+  anti_recommendations:
+    - skill: frontend-design
+      reason: PMs commission design work, they don't generate it.
+    - skill: design-shotgun
+      reason: Variant exploration is the designer's job; PM picks the winner.
+    - skill: ship
+      reason: PMs rarely push to production directly — they should hand off to an engineer.
+    - skill: vercel:env-vars
+      reason: Env var editing is engineering-owned; PM should not touch.
+    - skill: huggingface-llm-trainer
+      reason: Out of scope unless PM owns an ML product specifically.
+    - skill: ios-fix
+      reason: Platform-specific implementation work, not PM territory.
+
+  onboarding_questions_to_skip:
+    - your_preferred_editor
+    - terminal_shell_preference
+    - typescript_strictness_preference
+    - tailwind_config_preference
+    - git_branching_strategy_personal  # team-defined, not PM-personal

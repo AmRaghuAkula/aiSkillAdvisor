@@ -1,0 +1,128 @@
+---
+# Indie Hacker persona — solo entrepreneur with MULTIPLE launches.
+# Archetype: serial micro-SaaS builder; treats every project as an A/B test
+# on the market; lives by reuse, leverage, and shipping speed.
+
+persona:
+  id: indie-hacker
+  name: Indie Hacker
+  description: |
+    A solo entrepreneur with multiple parallel or sequential launches. Unlike
+    the solo founder (one product, many years), the indie hacker runs 3-10
+    micro-products and is constantly pruning losers + doubling down on
+    winners. They obsess over leverage: code, components, copy, infrastructure,
+    audit logs — everything should compound across launches.
+
+    They are pragmatic, not perfectionist. They will use shadcn over custom
+    components, Stripe over rolled-own billing, Supabase over hand-rolled auth.
+    They DESPISE skills that lock them into a single product or framework.
+    They love skills that let them reuse work across projects.
+
+  primary_intent: >
+    Ship one more launch this week using maximum reuse and minimum
+    bespoke work — and learn fast if it's a winner.
+
+  job_to_be_done: >
+    "Help me ship product N+1 by reusing what I built for products 1..N,
+    and tell me fast if this launch is dying so I can move on."
+
+  time_budget_per_session: 60
+  risk_tolerance: high               # comfortable with calculated bets
+  technical_depth: medium            # broad-not-deep; shipping-focused
+
+  primary_work_types:
+    - data-financials
+    - ai-llm-scoring
+    - visual-brand
+    - perf-debug
+    - growth-loyalty-abuse           # promo, referral, A/B tests are core
+
+  skill_weightings:
+    # Velocity + mechanization — heavily boosted
+    ship: 2.2                        # mechanize the entire merge+deploy loop
+    autoplan: 1.7                    # pre-merge sweep without thinking
+    vercel:deploy: 1.7
+    vercel:env-vars: 1.5             # they manage env vars across N projects
+    vercel:nextjs: 1.4
+    vercel:shadcn: 2.0               # component reuse is religion
+
+    # Reuse + leverage
+    claude-md-improver: 1.7          # keeps memory portable across projects
+    context-save: 1.6                # handoff context between sessions
+    context-restore: 1.6
+    dispatching-parallel-agents: 1.8 # parallel work on multiple products
+
+    # Speed-aware safety (they ship fast, but a security breach kills the portfolio)
+    cso: 1.5                         # not paranoid like the founder; risk-managed
+    careful: 1.4
+    verification-before-completion: 1.4
+
+    # Generative work — boosted for greenfield launches
+    frontend-design: 1.6             # generate distinct UIs per product
+    design-shotgun: 1.5              # variant exploration on landing pages
+    design-html: 1.5
+    brainstorming: 1.4
+
+    # Verification — boosted for "is this dying?" signals
+    browse: 1.6
+    qa: 1.4
+    qa-only: 1.4
+    benchmark: 1.3
+
+    # Planning — moderate (they prefer ship-and-learn over plan-then-build)
+    writing-plans: 1.2
+    spec: 1.0
+    investigate: 1.3
+
+    # Retros — boosted because compounding learnings is the indie hacker's edge
+    retro: 1.7
+
+    # De-prioritized
+    freeze: 1.0                      # they switch contexts constantly; freeze annoys
+    design-consultation: 1.1
+    huggingface-llm-trainer: 0.7
+    ios-fix: 0.5                     # web-first usually
+    ios-qa: 0.5
+    document-generate: 1.2
+
+  quality_judgment_phrases:
+    # Indie hackers use velocity + market language
+    - "good enough to ship"
+    - "is this differentiated"
+    - "does this compound"
+    - "can I reuse this"
+    - "is anyone paying"
+    - "kill it or double down"
+    - "is this a winner"
+    - "premium"                      # for landing pages of paid products
+    - "feels like a $X/mo product"
+
+  starter_workflow:
+    - Use /context-restore to pull state from last session on this product
+    - Use /retro to scan what won/lost across recent launches
+    - Use /writing-plans only for the one risky chunk; ship the rest
+    - Build with /frontend-design + /vercel:shadcn for max reuse
+    - Use /ship to mechanize merge + deploy
+
+  anti_recommendations:
+    - skill: freeze
+      reason: Indie hackers switch directories constantly across products — freeze creates friction without the safety benefit a single-product founder gets.
+    - skill: ios-design-review
+      reason: Web-first launches; iOS is later if at all.
+    - skill: ios-fix
+      reason: Wrong platform for most micro-SaaS launches.
+    - skill: huggingface-llm-trainer
+      reason: Indie hackers use API LLMs; training their own models is the opposite of leverage.
+    - skill: huggingface-vision-trainer
+      reason: Same — leverage > custom ML.
+    - skill: design-consultation
+      reason: Too slow for indie velocity; use design-shotgun or frontend-design directly.
+    - skill: postman:security
+      reason: Useful at scale, not at launch — defer until product has paying users.
+
+  onboarding_questions_to_skip:
+    - single_product_name             # they have many
+    - long_term_brand_strategy        # per-product, not global
+    - team_size                       # always 1
+    - design_system_maturity          # reuses shadcn across products
+    - which_jurisdiction_for_tos      # case-by-case per launch

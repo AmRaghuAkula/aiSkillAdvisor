@@ -1,0 +1,132 @@
+---
+# Designer Who Codes persona — designer with engineering ability.
+# Archetype: front-end-leaning designer; comfortable in Figma + Tailwind + React;
+# unsure on backend, auth, billing. Wants permission to ship without breaking
+# anything serious. High visual standards; low tolerance for AI-slop output.
+
+persona:
+  id: designer-who-codes
+  name: Designer Who Codes
+  description: |
+    A designer with real front-end ability — fluent in Figma, Tailwind, React,
+    and component libraries. They can ship a polished landing page from
+    scratch and have strong opinions on typography, spacing, and motion.
+    They are LESS confident on backend, auth, billing, and data work — and
+    want explicit guardrails so they don't accidentally break anything that
+    isn't visual.
+
+    They distinguish themselves from "vibe coders" by caring about CRAFT.
+    They will reject AI-generated UI that looks generic. They use quality-
+    judgment language naturally ("this feels off", "the spacing is wrong",
+    "that's an AI tell").
+
+    They want a safe ramp into engineering territory — skills that warn
+    them before they touch something they shouldn't.
+
+  primary_intent: >
+    Build production-quality visual surfaces with confidence, while staying
+    safely out of backend/billing/auth territory unless explicitly guided.
+
+  job_to_be_done: >
+    "Help me ship beautiful, brand-consistent pages without me accidentally
+    breaking the database or the payment flow."
+
+  time_budget_per_session: 90
+  risk_tolerance: medium         # high on visual experimentation; low on backend
+  technical_depth: medium        # strong on front-end, weak on infra
+
+  primary_work_types:
+    - visual-brand
+    - quality-judgment
+
+  skill_weightings:
+    # Visual quality — heavily boosted
+    design-review: 2.2                # core skill; runs constantly
+    design-consultation: 1.8
+    design-html: 1.8
+    design-shotgun: 1.7               # they LIKE variant exploration when direction not locked
+    frontend-design: 1.7              # for greenfield generative work
+    brainstorming: 1.5                # before any new visual direction
+
+    # Brand + system discipline
+    vercel:shadcn: 1.6                # component-foundation decisions
+    vercel:react-best-practices: 1.4
+    vercel:nextjs: 1.3
+
+    # Verification (designers MUST see it running, not infer from code)
+    browse: 1.7                       # screenshot + dogfood loop
+    run-hireastra: 1.6                # or whatever project runner exists
+    verification-before-completion: 1.5
+
+    # Safety on territory they don't own — heavily boosted as guardrails
+    careful: 1.8                      # destructive ops warning
+    freeze: 2.0                       # critical: keeps them inside design folders
+    cso: 1.3                          # safety net if they wander into billing
+
+    # Planning + parallel work
+    writing-plans: 1.3
+    dispatching-parallel-agents: 1.4  # multiple page redesigns in parallel
+    benchmark: 1.4                    # motion-heavy pages need perf checks
+
+    # Code review on design PRs
+    code-review: 1.3
+    review: 1.3
+
+    # Less relevant to their core work
+    ship: 1.1                         # they prefer human review before merge
+    autoplan: 1.0
+    investigate: 0.9                  # rarely root-cause backend bugs
+    health: 0.8
+    retro: 0.7
+    qa: 0.9
+
+    # Backend / infra — de-prioritized but not zero
+    vercel:deploy: 0.9
+    vercel:env-vars: 0.7              # they shouldn't be editing env vars solo
+    context-save: 1.0
+
+  quality_judgment_phrases:
+    # Designers naturally produce these — every one MUST trigger design-review
+    - "feels off"
+    - "the spacing is wrong"
+    - "that's an AI tell"
+    - "generic"
+    - "looks like a template"
+    - "elevated"
+    - "refined"
+    - "tasteful"
+    - "considered"
+    - "thoughtful"
+    - "polished"
+    - "premium"
+    - "the type isn't right"
+    - "the rhythm is off"
+
+  starter_workflow:
+    - Run /freeze to scope edits to design folders only (safety)
+    - Use /brainstorming before any new page direction
+    - Use /design-shotgun if direction is NOT locked yet
+    - Build with /frontend-design or /design-html
+    - Verify visually with /browse + screenshot
+    - Run /design-review before claiming done
+
+  anti_recommendations:
+    - skill: cso
+      reason: Not their lane — surface only if they accidentally edit billing/auth files.
+    - skill: investigate
+      reason: Backend debugging is out of scope; route to founder/eng instead.
+    - skill: vercel:env-vars
+      reason: Env var editing is high-risk for designers — should require eng pairing.
+    - skill: huggingface-llm-trainer
+      reason: Irrelevant to design work.
+    - skill: postman:security
+      reason: API security is not their domain.
+    - skill: ship
+      reason: Designers benefit from a human review checkpoint before merge — prefer manual PR.
+
+  onboarding_questions_to_skip:
+    - llm_provider_preference         # not their decision
+    - database_choice                 # not their decision
+    - billing_provider                # not their decision
+    - rls_familiarity                 # explicitly NOT their domain
+    - ci_cd_pipeline_setup
