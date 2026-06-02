@@ -22,8 +22,8 @@ This document tracks **candidate improvements** for aiSkillAdvisor and **open qu
 
 | Phase | Description | Status | Decision Gate |
 |---|---|---|---|
-| **0 — Dogfood + validate** | Run 2-3 real the dogfood project pilots with v0 active | 🟡 In progress (1st pilot: Pilot 1 /signin running) | After 3 successful pilots → proceed to Phase 1 |
-| **1 — Extract abstraction** | Pull the dogfood project-specific bits out; design per-project profile schema | 🔴 Not started | After Phase 0 validates |
+| **0 — Dogfood + validate** | Run 2-3 real the dogfood project pilots with v0 active | ✅ **Gate met** — 3 pilots complete (founder confirmed 2026-06-02) | Gate satisfied |
+| **1 — Extract abstraction** | Pull the dogfood project-specific bits out; design per-project profile schema | ⏸️ **Deferred by founder (2026-06-02)** | Evolving via Phase 2+ in parallel instead |
 | **2 — Manifest format + auto-discovery** | YAML schema for skill manifests + plugin auto-detection | 🔴 Not started | After Phase 1 abstraction stabilizes |
 | **3 — Plain-language output layer** | Translate technical output into non-tech-friendly phrasing | 🔴 Not started | Critical UX for target user |
 | **4 — Configuration UX** | Easy CLI/UI for non-tech users to add skills + curate profiles | 🔴 Not started | Adoption blocker without this |
@@ -40,7 +40,7 @@ These are the founder-committed product features for the standalone product, cap
 
 | ID | Feature | Priority | Spec | Notes |
 |---|---|---|---|---|
-| **F1** | Auto-sweep ability triggered by simple user instruction | **HIGH (Phase 2)** | User runs e.g. `aiskill-advisor sweep` or types `/sweep` and the tool scans installed Claude Code plugins (gstack, vercel, superpowers, etc.) + pre-populates the manifest with discovered skills. User reviews + accepts/rejects each. | Already drafted as `auto_discovery` placeholder in `prototypes/manifest-schema-draft.yaml` (Section 8) — elevate from draft to designed-and-built. Per-ecosystem adapter pattern needed (gstack/vercel/superpowers each package skills differently). |
+| **F1** | Auto-sweep ability triggered by simple user instruction | **HIGH (Phase 2)** | User runs e.g. `aiskill-advisor sweep` or types `/sweep` and the tool scans installed Claude Code plugins (gstack, vercel, superpowers, etc.) + pre-populates the manifest with discovered skills. User reviews + accepts/rejects each. | Already drafted as `auto_discovery` placeholder in `prototypes/manifest-schema-draft.yaml` (Section 8) — elevate from draft to designed-and-built. **Adapter reality (verified 2026-06-02):** plugins share a largely *uniform* structure (`.claude-plugin/plugin.json` + `skills/*/SKILL.md` frontmatter) — a single generic parser covers ~90%; thin hooks handle the real outliers: non-cache installs (**gstack is NOT in `~/.claude/plugins/cache/`**) + artifact types (skills vs commands vs agents). **Onboarding sweep must be EXHAUSTIVE — cache AND non-cache — find skills wherever they live.** (Resolves the practical core of Q3.) |
 | **F2** | Skill artifact distribution + one-command install | **HIGH (Phase 5)** | User runs ONE command — e.g. `npx aiSkillAdvisor init` OR `claude-code skill install aiSkillAdvisor` — and gets: (a) the advisor memory installed, (b) a starter project profile, (c) the slash command `/aiSkillAdvisor` available, (d) onboarding wizard launched. | Probably both a Claude Code plugin AND an npm package. Package the skill artifact so it can be added to a user's environment in a single step. Adoption blocker without this. |
 | **F11** | **On-demand plugin install (close the loop — don't punt to the human)** | **HIGH (Phase 4-5)** | When the advisor identifies a needed skill that isn't installed, it INSTALLS it (with permission) end-to-end, then confirms it actually loaded — instead of telling a non-technical user "go install this plugin." Pairs with F10's "Fetch from URL" (that workflow needs a real install backend) and is a precondition for F1 auto-sweep being useful (sweeping without installing is window-shopping). | **Founder mandate 2026-06-02:** *"the whole point is that I'm a non-technical person — I have no clue how to install this plug-in."* "Ask the human to install" defeats the advisor's purpose. **The Claude Code plugin install motion is 5 steps + a restart, NOT 4** (corrected 2026-06-02 after a silent-failure bug — see acceptance criteria). |
 
@@ -116,6 +116,26 @@ These are the founder-committed product features for the standalone product, cap
 | superpowers ecosystem | Community | (plugin marketplace) | TDD-validated, established |
 
 Users can ADD to this registry via UI or manifest. Registry entries can be REMOVED by user (e.g., if a source becomes untrustworthy).
+
+### Usability-first loop features (NEW 2026-06-02 — founder reframe)
+
+A founder review reframed the product as one continuous loop: **sweep everything → advise in-context → report the value delivered.** ① is F1 (exhaustive sweep). ② and ③ are the new features below. See `docs/PRODUCT_VISION.md` → "The product loop" for the narrative.
+
+| ID | Feature | Priority | Spec | Notes |
+|---|---|---|---|---|
+| **F12** | **Value & impact reporting (session + daily summary)** | **HIGH — founder mandate 2026-06-02** | A local-first **event log** records every advisor action — skill suggested, accepted/declined, and **near-misses caught** (a risky action prevented: billing change without security review, push without QA, etc.), each timestamped with context. A plain-language **summary** (end-of-session and/or daily) reports quality gains from skills used + a list/count of **prevented mistakes that would otherwise have shipped.** | **Strategic core, not cosmetic.** The counterfactual/near-miss data is *rare* — prevented mistakes leave no trace, and the advisor is uniquely positioned at the decision point to capture them → marketing proof + data moat. **Precondition: the event log must be captured from day one** (you can't report value you never logged), so its schema belongs in the data-foundation work even though the report UI comes later. Extends F6 (which is mere usage counts). Local-first per F7; any public value-stats are opt-in + aggregated. |
+| **F13** | **Context-aware continuous advising (user-context profile + conversation monitoring)** | **HIGH — founder mandate 2026-06-02** | (1) A **user-context profile** — role, expertise, project domains, preferences — built during onboarding (F3/O-series), stored locally, consulted by the router to weight suggestions. (2) **Continuous monitoring** of the ongoing conversation (not just session-start), classifying work-type per turn and proactively surfacing the right skill at the right moment. | The runtime "brain" the `ARCHITECTURE.md` algorithm describes — F13 makes *context-aware + continuous + proactive* an explicit product requirement. Fed by the user profile + the swept inventory (F1). Distinct from the manifest (the data); this is the running behavior. |
+
+#### Phase 2 design state — PAUSED 2026-06-02 (resume here)
+
+Brainstorming for Phase 2 ("data foundation") was in progress when the founder paused to capture this vision. Decisions locked so far (carry into the resumed design):
+
+- **Format:** YAML; **flat** (no inheritance, per Q5); merge = layered override (community < user < project, last wins).
+- **Manifest target:** real populated manifest stays **private/gitignored** (HireAstra paths); the schema, validator, and discovery code are public.
+- **Language:** Node/TS (Node is present on the dev machine; Python is not; also the eventual npm/plugin target).
+- **Discovery adapter:** generic parser + thin hooks (see F1 note) — **not** per-ecosystem adapters.
+- **Scope expanded by the reframe:** the data foundation must now define **three** schemas, not one — (a) swept skill inventory, (b) **user-context profile** (F13), (c) **value/event log incl. near-miss capture** (F12). The discovery is a *real exhaustive sweep*, not a throwaway PoC.
+- **Next step on resume:** finalize the design doc at `docs/superpowers/specs/2026-06-02-phase2-data-foundation-design.md`, then `superpowers:writing-plans`.
 
 ### Future / deferred
 

@@ -1,7 +1,7 @@
 # aiSkillAdvisor — Product Vision
 
 **Vision captured:** 2026-06-01
-**Status:** Long-term direction. NOT urgent. NOT next.
+**Status (updated 2026-06-02):** 3 dogfood pilots complete — the "start the standalone product" gate is now **MET**. Phase 1 (extraction) is **deferred by founder**; the product evolves via Phase 2+ (data foundation, discovery) in parallel, without disrupting dogfood usage. Implementation design is **paused mid-flight** (see "The product loop" below); build resumes later.
 
 ---
 
@@ -14,6 +14,22 @@ The Claude Code skill ecosystem has 180+ skills across plugin namespaces (gstack
 This problem disproportionately hurts **non-technical builders** — founders, indie hackers, product people, designers — who have product instincts but lack engineering instincts. They miss skill opportunities (don't invoke `cso` before merging billing changes; don't invoke `qa` before pushing UI; don't invoke `health` before a phase boundary) and ship lower-quality outputs as a result.
 
 **aiSkillAdvisor closes that gap** by serving as an intelligent routing layer over the entire skill ecosystem.
+
+---
+
+## The product loop (usability-first reframe — 2026-06-02)
+
+A founder review reframed the product around the **non-technical user's experience** as one continuous loop:
+
+**① Onboarding sweep →** On first run, discover *every* skill in the user's system — cache *and* non-cache, wherever they live. The user shouldn't curate a manifest by hand; the tool finds everything.
+
+**② Context-aware continuous advising →** Know *who the user is* (a stored user-context profile) and *what they're working on* (continuous monitoring of the conversation, not just a session-start check), and proactively surface the right skill at the right moment for a better outcome.
+
+**③ Value attribution →** A session/daily summary that *proves* what the advisor delivered: quality gains from skills used, and — critically — **the blind spots and near-misses it caught that would otherwise have shipped to production.**
+
+**Why ③ is the strategic core (not a nice-to-have):** prevented mistakes normally leave *no trace* — a bug that never ships is invisible, so its value is unmeasurable. The advisor sits *at the decision point*, making it uniquely able to record the **counterfactual** ("this would have gone to prod; the skill caught it"). That makes this data **rare** — it is both the product's marketing proof and a genuine data moat. *(Founder insight, 2026-06-02.)*
+
+These three map to backlog features **F1** (exhaustive sweep), **F13** (context-aware advising), and **F12** (value & impact reporting).
 
 ---
 
@@ -130,6 +146,8 @@ Full schema draft: see [`prototypes/manifest-schema-draft.yaml`](../prototypes/m
 
 ## Why NOW is NOT the right time to extract
 
+> **Update 2026-06-02:** The 3-pilot gate below is now **met** and the founder has greenlit continued evolution (Phase 2+). Phase 1 *extraction* remains deferred. The reasoning below is retained as historical context for why we waited.
+
 Per the discussion on 2026-06-01:
 
 1. **Premature optimization** — we have a paper design that passed synthetic tests, but ZERO real-work evidence
@@ -197,4 +215,4 @@ Per the discussion on 2026-06-01:
 
 ---
 
-*Last updated: 2026-06-01. Revisit cadence: after each successful the dogfood project pilot. Do not invest engineering until decision-rule criteria are met.*
+*Last updated: 2026-06-02. The 3-pilot decision gate is met; founder greenlit Phase 2+ evolution (Phase 1 extraction deferred). Implementation design paused mid-flight — resumes later.*
