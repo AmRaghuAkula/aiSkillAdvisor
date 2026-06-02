@@ -1,8 +1,8 @@
 # aiSkillAdvisor — Architecture Specification
 
-**Version:** v0 (HireAstra dogfooding instance)
+**Version:** v0 (the dogfood project dogfooding instance)
 **Date:** 2026-06-01
-**Source:** Extracted from the live HireAstra v0 memory file
+**Source:** Extracted from the live the dogfood project v0 memory file
 
 This document is the **canonical algorithm specification** for aiSkillAdvisor. It describes how a session should be routed to the right skill suggestions, how loops are prevented, and how rationalizations are caught before they cause misroutes.
 
@@ -81,9 +81,9 @@ This document is the **canonical algorithm specification** for aiSkillAdvisor. I
 
 ```
 known_roots = [
-    "C:\Users\raghu\Projects\OnePersonAICompany",
-    "C:\Users\raghu\Projects\HireAstra-design-sandbox",
-    "C:\Users\raghu\Projects\HireAstra-Pricing-Model",
+    "~/Projects/MyProject",
+    "C:\Users\raghu\Projects\the dogfood project-design-sandbox",
+    "C:\Users\raghu\Projects\the dogfood project-Pricing-Model",
     # (extensible — per-project profile defines this list)
 ]
 
@@ -115,7 +115,7 @@ The session is:
 
 **Purpose:** Route based on what files the session expects to touch.
 
-**v0 instance (HireAstra-specific) example:**
+**v0 instance (the dogfood project-specific) example:**
 
 ```
 ROUTES TO §1 — Core Engine
@@ -138,8 +138,8 @@ ROUTES TO §2 — Design + Brand
   src/components/landing/**     src/components/Wordmark.tsx
   src/components/layout/**      src/components/ftue/**
   src/components/ui/**          public/brand/**
-  public/favicon.svg            HireAstra-design-sandbox/**
-  HireAstra-Pricing-Model/**
+  public/favicon.svg            the dogfood project-design-sandbox/**
+  the dogfood project-Pricing-Model/**
 ```
 
 **Future (standalone product):** These tables become **per-project profile YAML**, not hardcoded.
@@ -278,7 +278,7 @@ For cross-section coordination:
 
 ---
 
-## Section structure (v0 HireAstra example)
+## Section structure (v0 the dogfood project example)
 
 The v0 dogfooding instance organizes triggers into two sections:
 
@@ -316,7 +316,7 @@ If a user repeatedly declines suggestions over 2+ sessions OR explicitly says "s
 | 2026-06-01 | GREEN — restructured with rationalization table + loop-prevention layer | Deployed |
 | 2026-06-01 | REFACTOR re-test (3 RED scenarios + 1 loop temptation) | **ALL 4 PASS** |
 | 2026-06-01 | Inline gap fixes (CASE E precedence, L2 read-only exception, Signal 0 Pricing-Model) | Applied |
-| TBD | First real-work pilot (REBRAND-024 /signin) | Running in parallel session |
+| TBD | First real-work pilot (sign-in page mockup) | Running in parallel session |
 
 ---
 

@@ -55,7 +55,7 @@ persona:
 
     # Verification (designers MUST see it running, not infer from code)
     browse: 1.7                       # screenshot + dogfood loop
-    run-hireastra: 1.6                # or whatever project runner exists
+    project-runner: 1.6               # project-specific build/serve runner (e.g., `gstack:run-<project>`)
     verification-before-completion: 1.5
 
     # Safety on territory they don't own — heavily boosted as guardrails

@@ -75,7 +75,7 @@ The rule:
 **Verification result for Scenario 2 after GREEN fix:**
 
 ```
-Skills surfaced: gstack:design-review, gstack:browse + run-hireastra,
+Skills surfaced: gstack:design-review, gstack:browse + project-runner,
                  superpowers:verification-before-completion
 Rationalization (verbatim): "It's just CSS hover shadows — anti-pattern says
 don't suggest skills for trivial actions." [STOP — that's the P2 red-flag phrase

@@ -1,6 +1,6 @@
 ---
 # Solo Founder persona — single founder building a SaaS product.
-# Archetype: HireAstra-style. Time-poor, polymath-curious, ships daily,
+# Archetype: a SaaS-builder dogfood project-style. Time-poor, polymath-curious, ships daily,
 # treats onboarding as friction. High stakes on billing + security because
 # real money flows through their hands; no co-founder to catch mistakes.
 
@@ -65,7 +65,7 @@ persona:
 
     # Verification + dogfooding — moderately boosted
     browse: 1.3
-    run-hireastra: 1.3
+    project-runner: 1.3
     qa: 1.2
 
     # Design — present but not boosted (founder cares but defers under pressure)

@@ -52,14 +52,14 @@ Plus **loop-prevention rules** so the AI doesn't cascade from "fix A" → "break
 
 ## Current status
 
-**v0 — dogfooding.** The first instance of aiSkillAdvisor is currently in active use as a memory mandate inside a Claude Code session working on a real product (HireAstra, an AI résumé/job-search SaaS). Every refinement made during real-world usage is captured and will inform v1 of the standalone product.
+**v0 — dogfooding.** The first instance of aiSkillAdvisor is currently in active use as a memory mandate inside a Claude Code session working on a real SaaS product (the maintainer's primary project). Every refinement made during real-world usage is captured and will inform v1 of the standalone product.
 
 **See [`docs/HANDOFF.md`](docs/HANDOFF.md)** for the full state-of-work from the v0 dogfooding.
 
 **Roadmap:**
-- ✅ v0 — discipline + algorithm validated on HireAstra (TDD methodology, baseline scenarios passed)
-- ⏳ v0.5 — accumulate improvisations during 2-3 real HireAstra pilots
-- ⏳ v1 — extract from HireAstra into portable, configurable standalone product
+- ✅ v0 — discipline + algorithm validated in real-world dogfooding (TDD methodology, baseline scenarios passed)
+- ⏳ v0.5 — accumulate improvisations during 2-3 real pilots
+- ⏳ v1 — extract from dogfood instance into portable, configurable standalone product
 - ⏳ v1.1 — auto-discovery of installed skills, plain-language output layer
 - ⏳ v2 — multi-platform (Cursor, Continue, Aider in addition to Claude Code)
 
@@ -89,7 +89,8 @@ Plus **loop-prevention rules** so the AI doesn't cascade from "fix A" → "break
 ```
 aiSkillAdvisor/
 ├── README.md                          # You are here
-├── LICENSE                            # MIT — free for community + commercial use
+├── LICENSE                            # PolyForm Noncommercial 1.0.0 (free personal; commercial via agreement)
+├── LICENSING.md                       # Plain-English licensing guide + commercial inquiry path
 ├── docs/
 │   ├── HANDOFF.md                     # State of work from v0 dogfooding
 │   ├── PRODUCT_VISION.md              # Why this exists, target users, capabilities
@@ -136,7 +137,14 @@ For now, please open an Issue rather than a Pull Request — we want to align on
 
 ## License
 
-MIT — see [LICENSE](LICENSE). Free to use, modify, distribute, and incorporate into commercial products.
+**PolyForm Noncommercial 1.0.0** — see [LICENSE](LICENSE) for the legal text + [LICENSING.md](LICENSING.md) for a plain-English guide.
+
+**Quick read:**
+- ✅ **Free for personal, educational, research, hobbyist, and non-profit use** — no payment, no agreement needed
+- 🤝 **Commercial use requires a separate agreement** — open a GitHub Issue and tag `@AmRaghuAkula` to start the conversation
+- 📜 **Drafted by a lawyer (Heather Meeker, Polyform Project)** — solid foundation, not a hand-rolled license
+
+This is a **fair-source** model — increasingly common in OSS since 2023 (used by HashiCorp, Sentry, Elastic, and others). It keeps the community-good mission intact while funding sustainability through commercial agreements.
 
 ---
 

@@ -1,15 +1,15 @@
 # Skill Advisor — Improvisations Log (Reference Copy)
 
 > **⚠ SOURCE OF TRUTH:** The live, mutable improvisations log lives at:
-> `C:\Users\raghu\.claude\projects\c--Users-raghu-Projects-OnePersonAICompany\memory\skill_advisor_improvisations.md`
+> `~/.claude/projects/<your-project-slug>/memory/skill_advisor_improvisations.md (in the maintainer's local Claude Code environment)`
 >
-> This file is a **frozen reference snapshot** captured 2026-06-01. Edits to the improvisations log happen in the memory directory during HireAstra dogfooding; this reference file is updated periodically via consolidated PR (per founder's plan).
+> This file is a **frozen reference snapshot** captured 2026-06-01. Edits to the improvisations log happen in the memory directory during the dogfood project dogfooding; this reference file is updated periodically via consolidated PR (per founder's plan).
 
 ---
 
 ## Purpose
 
-Every time we improvise or refine the Skill Advisor during HireAstra dogfooding, the change gets logged here. This log **IS the v1 changelog** when we eventually extract the standalone product.
+Every time we improvise or refine the Skill Advisor during the dogfood project dogfooding, the change gets logged here. This log **IS the v1 changelog** when we eventually extract the standalone product.
 
 **Discipline:** ANY change to the v0 OR new learning that should feed into the standalone product MUST be appended below. **No silent edits to the v0 — they all get a log entry here.**
 
@@ -32,14 +32,14 @@ Every time we improvise or refine the Skill Advisor during HireAstra dogfooding,
 - **Trigger:** Founder mandate on 2026-06-01 to elevate the prior proactive-skill-advisor memory into a TDD-validated, signal-routed system with §1/§2 separation.
 - **Change:** Full restructure with: routing algorithm (Signal 0 repo check + Signal 1 file paths + Signal 2 keywords/work-type), loop-prevention L1-L5, rationalization tripwires (3 patterns + counter-rules), red-flag phrases table, open-world rule, quality-judgment override, work-type classification step, CASE A-F routing logic.
 - **Validation:** `superpowers:writing-skills` invoked; baseline RED test ran 3 scenarios (promo codes, premium polish, ATS perf) + exposed 3 failure patterns verbatim. GREEN re-test ran same 3 + 1 loop temptation scenario; ALL 4 PASS.
-- **Generalizable?** YES — all of the above is universal pattern, not HireAstra-specific.
+- **Generalizable?** YES — all of the above is universal pattern, not the dogfood project-specific.
 - **Standalone-spec implication:** This is the core algorithm. Everything in the standalone v1 is built on this foundation.
 
 ## 2026-06-01 — REFACTOR gap fixes
 
-- **Trigger:** GREEN re-test surfaced 3 minor gaps: CASE E/B precedence ambiguity; L2 budget too tight for read-only/planning skill chains; Signal 0 repo list missing HireAstra-Pricing-Model.
-- **Change:** (1) CASE E supersedes CASE B when both apply — multi-type is broader, cross-section is its subset. (2) L2 budget excludes read-only/planning skills (`brainstorming`, `spec`, `writing-plans`, `code-review`, `design-review`, `verification-before-completion`, `investigate`, `browse`, `qa-only`, `health`); only mutating/deploying skills count. (3) Signal 0 adds `HireAstra-Pricing-Model` to in-scope repos.
-- **Generalizable?** YES for (1) and (2). (3) is HireAstra-specific path, but the *pattern* (Signal 0 enumerates in-scope project roots) is generic.
+- **Trigger:** GREEN re-test surfaced 3 minor gaps: CASE E/B precedence ambiguity; L2 budget too tight for read-only/planning skill chains; Signal 0 repo list missing the dogfood project-Pricing-Model.
+- **Change:** (1) CASE E supersedes CASE B when both apply — multi-type is broader, cross-section is its subset. (2) L2 budget excludes read-only/planning skills (`brainstorming`, `spec`, `writing-plans`, `code-review`, `design-review`, `verification-before-completion`, `investigate`, `browse`, `qa-only`, `health`); only mutating/deploying skills count. (3) Signal 0 adds `the dogfood project-Pricing-Model` to in-scope repos.
+- **Generalizable?** YES for (1) and (2). (3) is the dogfood project-specific path, but the *pattern* (Signal 0 enumerates in-scope project roots) is generic.
 - **Standalone-spec implication:** Both (1) and (2) need to be defaults in the standalone product. (3) becomes a per-project config item — the standalone product reads project-roots from a config file, not from hardcoded paths.
 
 ## 2026-06-01 — Identity rebrand: "Skill Advisor" as product name
@@ -81,13 +81,13 @@ Each row below is a real pilot moment where the advisor fired (or should have). 
 | Date | Pilot context | What the advisor did | Right outcome? | Lesson |
 |---|---|---|---|---|
 | 2026-06-01 | REFACTOR phase of writing-skills validation | CASE F correctly skipped advisor for "rename file to Skill Advisor" Q&A turn | ✅ | Q&A discipline holds in practice, not just in synthetic tests |
-| TBD | REBRAND-024 /signin pilot (in progress) | TBD | TBD | TBD |
-| TBD | REBRAND-022 /404 pilot | TBD | TBD | TBD |
-| TBD | First non-HireAstra session | TBD | TBD | Tests cross-project generalizability |
+| TBD | sign-in page mockup pilot (in progress) | TBD | TBD | TBD |
+| TBD | Pilot 2 (/404 error page mockup) | TBD | TBD | TBD |
+| TBD | First non-the dogfood project session | TBD | TBD | Tests cross-project generalizability |
 
 ---
 
-## Related (in HireAstra memory)
+## Related (in the dogfood project memory)
 
 - `feedback_proactive_skill_advisor.md` — the live v0 memory file
 - `project_skill_advisor_vision.md` — the standalone-product vision

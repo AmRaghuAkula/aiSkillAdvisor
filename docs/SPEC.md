@@ -95,7 +95,7 @@ aiSkillAdvisor — first-time setup
     [D] Plan a 3-week feature rollout
 
 [3/8] Where do you keep your projects? (drag a folder, or paste a path)
-  > C:\Users\raghu\Projects\OnePersonAICompany
+  > ~/Projects/MyProject
 
 ... (8 questions total — 3 required + 5 recommended, all skippable)
 
@@ -177,7 +177,7 @@ aiskill-advisor dry-run "<prompt>" [--cwd <path>] [--files <glob>...] [--explain
 ```
 $ aiskill-advisor dry-run "I want to add a promo code system to checkout"
 Routing trace:
-  Signal 0 (repo root): ✓ matched (hireastra project)
+  Signal 0 (repo root): ✓ matched (my-project project)
   Signal 1 (file paths): inferred — src/lib/billing/**, src/app/api/checkout/**
   Signal 2 (work-types): data/financials + growth/loyalty/abuse + spec-ambiguous
   Routing case: E (multi-type)
@@ -217,11 +217,11 @@ $ aiskill-advisor status --period 30d
 aiSkillAdvisor — ledger for 2026-05-02 → 2026-06-01
 
 Registered skills:        47 (gstack: 28, vercel: 12, superpowers: 7)
-Active profiles:          2 (hireastra, founderassist)
+Active profiles:          2 (my-project, founderassist)
 Suggestions surfaced:     63
 Accepted:                 41 (65%)
 Declined:                 22 (35%)
-Sunset (per-context):      3 (cso in hireastra/design-brand, ...)
+Sunset (per-context):      3 (cso in my-project/design-brand, ...)
 
 Top 5 most-fired skills (last 30d):
   1. gstack:cso              14 fires, 12 accepted (86%)
@@ -312,10 +312,10 @@ user_persona:
   technical_level: low                   # low | medium | high
   inferred_from: task-picks              # task-picks | self-report | template-only
 projects:
-  - id: hireastra
-    name: HireAstra
+  - id: my-project
+    name: the dogfood project
     repo_roots:
-      - "C:\\Users\\raghu\\Projects\\OnePersonAICompany"
+      - "~/Projects/MyProject"
     primary_sections: [core-engine, design-brand]
 strong_fit_skills:
   - gstack:cso
@@ -332,7 +332,7 @@ confidence_bands:                        # O5 — must be evidence-grounded or o
 # About you
 
 You are a **solo founder** building a US/Canada-focused SaaS product
-(HireAstra) using Claude Code on Windows 11. You prefer plain-language
+(the dogfood project) using Claude Code on Windows 11. You prefer plain-language
 suggestions.
 
 # How aiSkillAdvisor will help you
@@ -372,9 +372,9 @@ manifest:
   scope: "user"
 
 projects:
-  - id: "hireastra"
-    name: "HireAstra"
-    repo_roots: ["C:\\Users\\raghu\\Projects\\OnePersonAICompany"]
+  - id: "my-project"
+    name: "the dogfood project"
+    repo_roots: ["~/Projects/MyProject"]
     sections:
       - id: "core-engine"
         name: "§1 — Core Engine"
@@ -388,7 +388,7 @@ skills:
     what_it_touches: ["src/lib/billing/**", "src/app/api/billing/**"]
     mutating: false
     section: "core-engine"
-    project: "hireastra"
+    project: "my-project"
     quality_judgment_trigger: false
 
     # NEW in v1:
@@ -421,8 +421,8 @@ One JSON object per line. Append-only.
   "event_id": "01H8XK3...",
   "timestamp": "2026-06-01T14:32:15.123Z",
   "session_id": "claude-code-abc123",
-  "project_id": "hireastra",
-  "cwd": "C:\\Users\\raghu\\Projects\\OnePersonAICompany",
+  "project_id": "my-project",
+  "cwd": "~/Projects/MyProject",
   "prompt_excerpt": "add a promo code system to checkout",
   "files_inferred": ["src/lib/billing/**", "src/app/api/checkout/**"],
   "work_types_matched": ["data-financials", "growth-loyalty-abuse", "spec-ambiguous"],
@@ -451,7 +451,7 @@ Optional. Lives at project root. Overrides specific keys from user-level manifes
 
 ```yaml
 schema_version: 1
-project_id: "hireastra"
+project_id: "my-project"
 sections_override:
   - id: "growth-marketing"
     name: "§3 — Growth + Marketing"

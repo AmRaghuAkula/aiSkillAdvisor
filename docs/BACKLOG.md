@@ -1,7 +1,7 @@
 # aiSkillAdvisor — Backlog + Open Questions
 
 **Date:** 2026-06-01
-**Status:** Curated from HireAstra v0 dogfooding + the standalone-product vision
+**Status:** Curated from the dogfood project v0 dogfooding + the standalone-product vision
 
 This document tracks **candidate improvements** for aiSkillAdvisor and **open questions** that need resolution before the standalone product can ship.
 
@@ -11,7 +11,7 @@ This document tracks **candidate improvements** for aiSkillAdvisor and **open qu
 
 | When | What to do |
 |---|---|
-| You spot a gap during HireAstra dogfooding | Log it as a candidate in the **Improvisations Queue** below |
+| You spot a gap during the dogfood project dogfooding | Log it as a candidate in the **Improvisations Queue** below |
 | A candidate becomes validated via TDD cycle | Move it from Improvisations Queue → Implemented (in `reference/v0-improvisations.md`) |
 | You hit an open question that blocks progress | Add it to **Open Questions** below; flag the blocking dependency |
 | You complete a Phase milestone | Update the **Phase Status** table |
@@ -22,8 +22,8 @@ This document tracks **candidate improvements** for aiSkillAdvisor and **open qu
 
 | Phase | Description | Status | Decision Gate |
 |---|---|---|---|
-| **0 — Dogfood + validate** | Run 2-3 real HireAstra pilots with v0 active | 🟡 In progress (1st pilot: REBRAND-024 /signin running) | After 3 successful pilots → proceed to Phase 1 |
-| **1 — Extract abstraction** | Pull HireAstra-specific bits out; design per-project profile schema | 🔴 Not started | After Phase 0 validates |
+| **0 — Dogfood + validate** | Run 2-3 real the dogfood project pilots with v0 active | 🟡 In progress (1st pilot: Pilot 1 /signin running) | After 3 successful pilots → proceed to Phase 1 |
+| **1 — Extract abstraction** | Pull the dogfood project-specific bits out; design per-project profile schema | 🔴 Not started | After Phase 0 validates |
 | **2 — Manifest format + auto-discovery** | YAML schema for skill manifests + plugin auto-detection | 🔴 Not started | After Phase 1 abstraction stabilizes |
 | **3 — Plain-language output layer** | Translate technical output into non-tech-friendly phrasing | 🔴 Not started | Critical UX for target user |
 | **4 — Configuration UX** | Easy CLI/UI for non-tech users to add skills + curate profiles | 🔴 Not started | Adoption blocker without this |
@@ -84,6 +84,23 @@ These are the founder-committed product features for the standalone product, cap
 | **F6** | Skill ledger / status command | MEDIUM (Phase 4) | `aiskill-advisor status` → shows which skills registered, which fired this week, which never fire (stale), which most-used, which highest-value (per user feedback). | Visibility into what's in the system. Without ledger, advisor is a black box. |
 | **F9** | Cost / time awareness | MEDIUM (Phase 3-4) | When suggesting a skill, show estimated cost (LLM tokens) + estimated time (long-running). Example: *"Skill suggestion: `qa` — ~5 min, ~$0.40 in LLM calls. Want me to invoke?"* | Lets user weigh suggestion against budget. Expensive skills feel scary without context. |
 
+### Periodic auto-sweep + UI-driven skill discovery (NEW 2026-06-01)
+
+| ID | Feature | Priority | Spec | Notes |
+|---|---|---|---|---|
+| **F10** | **Periodic skill sweep with trusted-source registry + UI button + manual repo URL** | **HIGH (Phase 4-5)** | (1) Optional weekly background sweep that asks permission before running (default: ASK; can be auto-yes via config). (2) Trusted-source registry: known repos that get scanned automatically (default seed list: `anthropics/knowledge-work-plugins`, gstack ecosystem, vercel ecosystem, superpowers ecosystem; user-extensible). (3) **"Refresh skills" button** in the onboarding/settings UI — user clicks → fetches latest from all trusted sources → diffs against existing manifest → presents new skills for accept/reject. (4) **"Fetch from URL" input** — user pastes any GitHub repo URL (e.g., `https://github.com/orgname/cool-plugin`) + clicks Fetch → repo gets scanned → discovered skills added (with confirmation per-skill). | Critical for non-tech users — manual `aiskill-advisor sweep` requires CLI. UI button + URL paste turns skill discovery into a one-click action. Founder vision 2026-06-01. |
+
+#### Trusted-source registry — initial seed list (v1)
+
+| Source | Type | URL | Why trusted |
+|---|---|---|---|
+| `anthropics/knowledge-work-plugins` | Anthropic-official | github.com/anthropics/knowledge-work-plugins | Anthropic-published (legal, bio-research, customer-support, design, engineering, enterprise-search, finance, HR, marketing, operations, etc. — 14 plugin domains) |
+| gstack ecosystem | Community-curated | (plugin marketplace) | Battle-tested, used by current dogfood instance |
+| vercel ecosystem | Vercel-official | (plugin marketplace) | Vercel-published |
+| superpowers ecosystem | Community | (plugin marketplace) | TDD-validated, established |
+
+Users can ADD to this registry via UI or manifest. Registry entries can be REMOVED by user (e.g., if a source becomes untrustworthy).
+
 ### Future / deferred
 
 | ID | Feature | Priority | Spec | Notes |
@@ -92,7 +109,7 @@ These are the founder-committed product features for the standalone product, cap
 
 ---
 
-## Generalizations from Pilot 1 (REBRAND-024 /signin — 2026-06-01)
+## Generalizations from Pilot 1 (Pilot 1 /signin — 2026-06-01)
 
 Pilot 1 surfaced 3 v0 refinements + 3 product-level generalizations for the standalone v1. The v0 refinements were applied to `feedback_proactive_skill_advisor.md` directly + logged in `skill_advisor_improvisations.md`. The product-level generalizations below become v1 features.
 
@@ -138,9 +155,9 @@ Agent-1 brainstorming surfaced 4 alternatives that should happen but haven't yet
 
 | ID | Item | Why valuable | Priority |
 |---|---|---|---|
-| **CF1** | **v0 retrospective from REBRAND-024** | Capture the REASONING behind each refinement (not just what changed). Highest-decay knowledge — fresh now, lost in 2 weeks. | **HIGH** |
+| **CF1** | **v0 retrospective from Pilot 1** | Capture the REASONING behind each refinement (not just what changed). Highest-decay knowledge — fresh now, lost in 2 weeks. | **HIGH** |
 | **CF2** | **Pilot-success rubric** | Define what counts as a "successful pilot" before the 3-pilot gate triggers extraction. Without this, the gate is theater. | **HIGH** |
-| **CF3** | **v0 failure-mode catalogue** | When did v0 NOT fire when it should have during REBRAND-024? Negative evidence shapes v1 more than positive. | **MEDIUM-HIGH** |
+| **CF3** | **v0 failure-mode catalogue** | When did v0 NOT fire when it should have during Pilot 1? Negative evidence shapes v1 more than positive. | **MEDIUM-HIGH** |
 | **CF4** | **CONTRIBUTING.md** for the aiSkillAdvisor repo | Currently no guidance for external contributors; community can't engage. | **MEDIUM** |
 
 These are NOT in the v1 SPEC (because they're either docs or pilot-discipline, not product features). They belong in the next session's TODO.
@@ -222,7 +239,7 @@ These need resolution before specific phases can begin. Each blocks something do
 | ❌ Replacing existing skill systems (gstack, vercel, etc.) | Wrong layer. Advisor wraps; doesn't replace. |
 | ❌ Building new skills from scratch as part of aiSkillAdvisor | Wrong scope. Advisor routes EXISTING skills. |
 | ❌ AI-generated trigger rows without human review | Quality risk. Triggers reviewed by founder/maintainer. |
-| ❌ Adding paid skills to the manifest without licensing review | Legal risk. MIT only for v0; commercial integrations require explicit licensing. |
+| ❌ Adding paid skills to the manifest without licensing review | Legal risk. PolyForm Noncommercial governs aiSkillAdvisor itself; commercial integrations of third-party skills require their own licensing review. |
 | ❌ Building a "skill marketplace" — that's a different product | Stay focused on routing/advisory. |
 
 ---
@@ -244,7 +261,7 @@ These need resolution before specific phases can begin. Each blocks something do
         ↓
 [REFACTOR — close loopholes; check edge cases]
         ↓
-[Apply to v0 (HireAstra memory) + log in v0-improvisations.md]
+[Apply to v0 (the dogfood project memory) + log in v0-improvisations.md]
         ↓
 [Mark as ✓ Implemented in this BACKLOG.md]
         ↓

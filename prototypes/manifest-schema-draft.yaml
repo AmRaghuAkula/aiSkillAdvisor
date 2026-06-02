@@ -24,7 +24,7 @@ manifest:
   author: "raghu"                  # who maintains this manifest
   scope: "user"                    # "user" | "project" | "community"
   description: >
-    Personal Skill Advisor manifest for HireAstra dogfooding.
+    Personal Skill Advisor manifest for MyProject dogfooding.
     Includes gstack, vercel, superpowers ecosystems.
 
 # ─── SECTION 2: Project profiles ────────────────────────────────────────
@@ -32,13 +32,13 @@ manifest:
 # route to which section, and which skills are available in this project.
 projects:
 
-  - id: "hireastra"
-    name: "HireAstra"
+  - id: "my-project"
+    name: "MyProject"
     description: "AI résumé / job-search SaaS"
     repo_roots:                   # Signal 0 — advisor activates in these paths
-      - "C:\\Users\\raghu\\Projects\\OnePersonAICompany"
-      - "C:\\Users\\raghu\\Projects\\HireAstra-design-sandbox"
-      - "C:\\Users\\raghu\\Projects\\HireAstra-Pricing-Model"
+      - "~/Projects/MyProject"
+      - "C:\\Users\\raghu\\Projects\\MyProject-design-sandbox"
+      - "C:\\Users\\raghu\\Projects\\MyProject-Pricing-Model"
 
     # Custom sections for this project (advisor splits triggers across them)
     sections:
@@ -80,8 +80,8 @@ projects:
           - "src/components/ui/**"
           - "public/brand/**"
           - "public/favicon.svg"
-          - "HireAstra-design-sandbox/**"
-          - "HireAstra-Pricing-Model/**"
+          - "MyProject-design-sandbox/**"
+          - "MyProject-Pricing-Model/**"
 
 # ─── SECTION 3: Skill inventory ─────────────────────────────────────────
 # Skills the advisor knows about. Each skill has triggers (when to suggest)
@@ -102,7 +102,7 @@ skills:
       - "supabase/migrations/**"
     mutating: false               # cso reads + reports, doesn't auto-fix
     section: "core-engine"
-    project: "hireastra"
+    project: "my-project"
 
   - name: "gstack:ship"
     ecosystem: "gstack"
@@ -112,7 +112,7 @@ skills:
     what_it_touches: []           # full repo; ship can touch anything
     mutating: true                # ship modifies git state + may deploy
     section: "core-engine"
-    project: "hireastra"
+    project: "my-project"
 
   - name: "gstack:design-review"
     ecosystem: "gstack"
@@ -128,7 +128,7 @@ skills:
       - "*.html"
     mutating: false
     section: "design-brand"
-    project: "hireastra"
+    project: "my-project"
     quality_judgment_trigger: true # special flag — overrides trivial-action skip
 
   - name: "superpowers:brainstorming"
@@ -142,7 +142,7 @@ skills:
     what_it_touches: []           # planning only
     mutating: false
     section: "any"                # cross-section: applies to §1 and §2
-    project: "hireastra"
+    project: "my-project"
 
   - name: "superpowers:writing-plans"
     ecosystem: "superpowers"
@@ -152,7 +152,7 @@ skills:
     what_it_touches: []
     mutating: false
     section: "any"
-    project: "hireastra"
+    project: "my-project"
 
   # ... additional skills follow the same shape ...
 
@@ -306,7 +306,7 @@ auto_discovery:
 # ─── END OF DRAFT ───────────────────────────────────────────────────────
 #
 # NEXT STEPS for this draft:
-#   1. Validate the schema against real HireAstra usage (does it capture
+#   1. Validate the schema against real MyProject usage (does it capture
 #      everything the live v0 does?)
 #   2. Add an example user-defined custom skill entry
 #   3. Define how multiple manifests merge (user + project + community)
