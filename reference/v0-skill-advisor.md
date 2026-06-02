@@ -159,11 +159,12 @@ Before matching skills, **classify the work-type(s)**. Multi-type work routes to
 | Trigger | Suggested skill | Rationale |
 |---|---|---|
 | Starting design on a new page | `superpowers:brainstorming` | "MUST use before any creative work" |
-| Exploring 2-3 variants for a greenfield page | `gstack:design-shotgun` | Variant exploration |
-| Generating production page from scratch | `frontend-design:frontend-design` | Built to produce distinctive frontend work |
+| Exploring 2-3 variants for a greenfield page (only when direction is NOT yet locked; skip post-lock) | `gstack:design-shotgun` | Variant exploration. **Precondition: direction_locked == false** (Pilot 1 lesson 2026-06-01) |
+| Generating production page from scratch — skip when task = "match an existing locked design system" | `frontend-design:frontend-design` | Distinctive frontend work. **Precondition: task_intent != match_locked_system** (Pilot 1 lesson 2026-06-01) |
 | Finished a new page or visual component | `gstack:design-review` | Designer's eye QA |
 | Founder uses quality-judgment phrase | `gstack:design-review` | Overrides trivial-action skip |
 | Visually validating a design change in browser | `gstack:browse` + `gstack:run-hireastra` | Headless browser + project-aware runner |
+| Visually validating a standalone sandbox HTML file (no Next.js dev server) | start a local static HTTP server first (Node `npx http-server` if present; never assume `file://` works) | Verify-before-claiming-done requires HTTP; runtime-detect Node/Python. **Pilot 1 lesson** — stopgap until standalone product owns a static-server shim (see BACKLOG P2) |
 | Translating sandbox HTML → Next.js production code | `vercel:nextjs` | App Router guidance |
 | Editing 2+ TSX files in a session | `vercel:react-best-practices` | Auto-triggers (ambient) |
 | Considering shadcn/ui as component foundation | `vercel:shadcn` | Founder-decision moment |
@@ -222,6 +223,8 @@ If the user repeatedly declines suggestions over 2+ sessions OR explicitly says 
 | 2026-06-01 | RED — baseline test with `superpowers:writing-skills` | 3 failure patterns surfaced (anchor bias, trivial-action misfire, closed-world assumption) |
 | 2026-06-01 | GREEN — restructured with rationalization table + loop-prevention layer | Deployed |
 | 2026-06-01 | REFACTOR re-test (3 RED scenarios + 1 loop temptation) | **ALL 4 PASS.** 3 minor gaps fixed inline. |
+| 2026-06-01 | Pilot 1 (REBRAND-024 /signin) — first real-work dogfood | 3 refinements applied to v0: `design-shotgun` precondition (direction-locked), `frontend-design` match-vs-generate guard, NEW row for sandbox-HTML verify (static-server shim). All 3 generalize to standalone product BACKLOG (P1-P3). |
+| 2026-06-01 | Brainstorming miss caught + 2 v0 gaps identified | Founder caught the advisor failing to fire `superpowers:brainstorming` on creative product feature design. Root cause: CASE C too quiet for substantive novel-domain work; §2 `brainstorming` row too narrow (UI-pages only). Refinement candidates queued (see improvisations log) pending RED-test per writing-skills Iron Law. |
 
 ---
 

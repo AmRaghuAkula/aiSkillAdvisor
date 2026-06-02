@@ -32,6 +32,106 @@ This document tracks **candidate improvements** for aiSkillAdvisor and **open qu
 
 ---
 
+## Must-Build Features for v1
+
+These are the founder-committed product features for the standalone product, captured 2026-06-01. Priorities assigned; **phasing TBD by founder** (will be slotted into the Phase Status table above as decisions land). Each feature has a brief spec + design notes.
+
+### Distribution + accessibility (CRITICAL for adoption)
+
+| ID | Feature | Priority | Spec | Notes |
+|---|---|---|---|---|
+| **F1** | Auto-sweep ability triggered by simple user instruction | **HIGH (Phase 2)** | User runs e.g. `aiskill-advisor sweep` or types `/sweep` and the tool scans installed Claude Code plugins (gstack, vercel, superpowers, etc.) + pre-populates the manifest with discovered skills. User reviews + accepts/rejects each. | Already drafted as `auto_discovery` placeholder in `prototypes/manifest-schema-draft.yaml` (Section 8) — elevate from draft to designed-and-built. Per-ecosystem adapter pattern needed (gstack/vercel/superpowers each package skills differently). |
+| **F2** | Skill artifact distribution + one-command install | **HIGH (Phase 5)** | User runs ONE command — e.g. `npx aiSkillAdvisor init` OR `claude-code skill install aiSkillAdvisor` — and gets: (a) the advisor memory installed, (b) a starter project profile, (c) the slash command `/aiSkillAdvisor` available, (d) onboarding wizard launched. | Probably both a Claude Code plugin AND an npm package. Package the skill artifact so it can be added to a user's environment in a single step. Adoption blocker without this. |
+
+### Onboarding (CRITICAL for non-tech audience)
+
+| ID | Feature | Priority | Spec | Notes |
+|---|---|---|---|---|
+| **F3** | Onboarding wizard (umbrella) | **HIGH (Phase 4)** | Simple UI that captures user profile → saves to `onboard-guidelines.md` → guidelines become the working guidelines for aiSkillAdvisor (loaded at session-start). Algorithm gives weightage to skills based on profile. | Founder vision. Without this, adoption stalls at minute 5 because target user is non-technical. See sub-features O1-O10 below. |
+
+#### Onboarding sub-features (founder's 5 original creative ideas)
+
+| ID | Sub-feature | Priority | Notes from brainstorming |
+|---|---|---|---|
+| **O1** | Confidence-weighted question depth (3 required + 5 recommended + optional deep dive) | HIGH | Strong design. Watch labeling: "Recommended" framing guilts users into over-answering — re-label as "Skip anytime." |
+| **O2** | Live preview during onboarding (right-side panel shows skill suggestions updating in real-time) | HIGHEST among the 5 | Best feature for non-tech audience — converts abstract questions into visible consequences. Watch for flicker/jitter as suggestions reshuffle on every keystroke. Debounce ~300ms. |
+| **O3** | Persona templates (solo founder, designer-who-codes, PM in tech, indie hacker) | HIGH | Useful as starting point, dangerous as destination — hard-coded personas calcify. Pair with O9 (borrowed-profile) and make every template editable line-by-line. |
+| **O4** | Re-onboarding cadence (90-day check-in) | **DOWNGRADED — weakest of the 5** | Cadence-based prompts feel like nag-ware. **Replace with event-triggered re-onboarding**: trigger on role change, repeated skill rejection (5+ in a row), or inventory update (new plugin installed). |
+| **O5** | Confidence calibration ("HIGH confidence for X, MEDIUM for Y, LOW for Z") | MEDIUM-HIGH | Strong in principle, hard to execute honestly. Risk: confidence numbers without grounding feel arbitrary. Only ship if you can name the EVIDENCE behind each band (e.g., "high confidence because 80%+ skills in this domain are mapped"). |
+
+#### Onboarding sub-features (NEW — from brainstorming agent 2026-06-01)
+
+| ID | Sub-feature | Priority | Spec |
+|---|---|---|---|
+| **O6** | Show-don't-ask inference | **HIGHEST IMPACT (per brainstorming agent)** | Ask user to pick 2-3 sample tasks from a visual gallery; infer profile from picks. Bypasses self-report bias entirely — non-tech users systematically mis-rate their own AI literacy. |
+| **O7** | Skill anti-recommendations | HIGH | Explicitly tell user which skills NOT to load given their profile, with reasoning. Reduces inventory anxiety + builds trust. ("You're a solo founder so you probably don't need `ios-design-review` right now — feel free to skip.") |
+| **O8** | Guideline diff preview before commit | HIGH | Show user the markdown about to be written about them; let them edit in plain English. Increases ownership + catches misinterpretation. Critical for trust. |
+| **O9** | Borrowed-profile cold start | HIGH | "Start with [persona]'s guidelines, adjust later" — lets users skip onboarding entirely and refine via use. Pairs with O3 (persona templates). |
+| **O10** | Onboarding-as-conversation log | MEDIUM | Store the Q&A transcript alongside the guideline doc so future sessions can re-derive intent if the doc gets stale. Long-tail value. |
+
+### Trust + safety (FOUNDATION)
+
+| ID | Feature | Priority | Spec | Notes |
+|---|---|---|---|---|
+| **F4** | Dry-run mode | **HIGH (Phase 3)** | `aiskill-advisor dry-run "I want to add a promo code system"` → shows what skills WOULD fire without invoking. | Critical for trust. Users need to see judgment before letting the advisor influence real work. |
+| **F5** | Acceptance learning / per-suggestion sunset | **HIGH (Phase 3)** | Advisor tracks suggestion accept/decline patterns. After 10 declines of same suggestion in same context → stop suggesting in that context. (Per-context sunset, not global.) | Without this, advisor feels naggy → users disable. Build feedback loop into weightage algorithm. |
+| **F7** | Privacy / local-first architecture | **MUST DESIGN FROM DAY 1 (Phase 1)** | By default: no telemetry, no remote calls. Manifest on disk. Suggestion history on disk. Nothing phones home without explicit opt-in. | Trust foundation. Not a feature — an architecture default. Non-tech users worry about data; local-first eliminates the worry. |
+
+### Visibility + usability
+
+| ID | Feature | Priority | Spec | Notes |
+|---|---|---|---|---|
+| **F6** | Skill ledger / status command | MEDIUM (Phase 4) | `aiskill-advisor status` → shows which skills registered, which fired this week, which never fire (stale), which most-used, which highest-value (per user feedback). | Visibility into what's in the system. Without ledger, advisor is a black box. |
+| **F9** | Cost / time awareness | MEDIUM (Phase 3-4) | When suggesting a skill, show estimated cost (LLM tokens) + estimated time (long-running). Example: *"Skill suggestion: `qa` — ~5 min, ~$0.40 in LLM calls. Want me to invoke?"* | Lets user weigh suggestion against budget. Expensive skills feel scary without context. |
+
+### Future / deferred
+
+| ID | Feature | Priority | Spec | Notes |
+|---|---|---|---|---|
+| **F8** | Skill recipes / playbooks | LOW (Defer to v2) | User-defined multi-step flows. Example: "pre-launch checklist" runs `qa` + `cso` + `health` + `benchmark` in sequence. | Useful but adds complexity; users don't need it day 1. |
+
+---
+
+## Generalizations from Pilot 1 (REBRAND-024 /signin — 2026-06-01)
+
+Pilot 1 surfaced 3 v0 refinements + 3 product-level generalizations for the standalone v1. The v0 refinements were applied to `feedback_proactive_skill_advisor.md` directly + logged in `skill_advisor_improvisations.md`. The product-level generalizations below become v1 features.
+
+| ID | Generalization | Priority | Spec |
+|---|---|---|---|
+| **P1** | Manifest schema needs `precondition` field per skill | **HIGH (Phase 2)** | Each skill in the manifest gets an optional `precondition` field (boolean expression evaluated at routing time). Examples: `direction_locked == false` for `design-shotgun`; `task_intent != match_locked_system` for `frontend-design`. Routing engine evaluates preconditions before firing. |
+| **P2** | Verify capability needs built-in static-server shim | **HIGH (Phase 3)** | Verify step (used in `verification-before-completion`, `browse`-style validation, design-review of sandbox HTML) must auto-detect a static-server runtime: Node `npx http-server`, Python `http.server`, Bun `serve`. Never assume `file://` works (Playwright MCP blocks it). Never assume a specific runtime is installed. |
+| **P3** | Match-vs-generate semantic in skill metadata | **MEDIUM (Phase 2)** | Skills should declare in their manifest entry whether they GENERATE novel work (`frontend-design`, `design-shotgun`) or MATCH existing systems (the hand-build pattern for /signin). Some skills do both; that's fine. Routing engine uses this to avoid firing "generate novel" skills when the task is "match locked". |
+
+---
+
+## Brainstorming-derived design constraints (anti-patterns to AVOID)
+
+From the brainstorming agent 2026-06-01 — design choices that would hurt the target non-tech audience. Apply these as constraints across F1-F9 + O1-O10:
+
+| Anti-pattern | Why to avoid | Counter-design |
+|---|---|---|
+| **Asking users to self-rate AI literacy on a 1-10 scale** | Non-tech users systematically under- or over-rate themselves — the answer is noise. | Infer from task choice (O6) instead. |
+| **Showing the full 180+ inventory at any point in onboarding** | Induces choice paralysis + impostor feeling. | Surface 5-7 skills max at any time. Progressive disclosure. |
+| **Requiring goal articulation upfront** | Non-tech users discover goals by seeing options, not by stating them. | Reverse it: show possibilities, let them point. |
+| **Skill jargon in question wording ("Do you need RAG?")** | User can't recognize skill names. | Translate to outcomes ("Do you want the advisor to read your own docs?"). Jargon only in tooltips. |
+| **Gating value behind onboarding completion** | First skill suggestion must appear before question 3, or drop-off spikes. | Show value progressively from question 1 onward. |
+
+---
+
+## Failure-mode countermeasures (from brainstorming agent)
+
+Specific stumble points common in non-tech-user onboarding, with countermeasures:
+
+| Stumble point | Counter-design |
+|---|---|
+| **Vocabulary mismatch** — user can't recognize skill names | Outcome-phrased labels everywhere; jargon in tooltip only |
+| **Premature commitment** — user picks a persona and feels locked in | Persistent low-friction "this isn't me" escape button on every screen |
+| **Empty-state shame** — "I have no projects" feels disqualifying | Explicit aspirational track treats no-projects as a first-class state |
+| **Trust collapse on first bad recommendation** — non-tech users don't retry | Confidence labels + one-tap "wrong skill, here's why" feedback loop wired into weightage |
+| **Abandoned mid-flow** — user stops halfway through onboarding | Every screen produces a usable (if rough) guideline doc — partial completion still yields value |
+
+---
+
 ## Improvisations Queue (candidate refinements)
 
 Items below are CANDIDATES that may become implemented refinements after TDD validation. Not yet applied to v0. Re-evaluate periodically.
