@@ -1,0 +1,320 @@
+# aiSkillAdvisor — Skill Manifest Schema (DRAFT)
+#
+# Status: Draft. NOT yet implemented. For discussion and iteration during
+#         Phase 2 (standalone-product extraction).
+#
+# Purpose: Define a YAML schema that lets users register skills + project
+#          profiles for aiSkillAdvisor to consume. The advisor reads a
+#          manifest like this at session-start to populate its routing
+#          tables dynamically.
+#
+# Why YAML: human-readable, comments allowed, well-supported across
+#           ecosystems. JSON is an alternative; TOML is also possible.
+#           Decision pending Phase 2.
+#
+# Sources of truth this would enable (eventually):
+#   - User's personal manifest (~/.aiskilladvisor/manifest.yaml)
+#   - Per-project profile (./.aiskilladvisor.yaml in each project root)
+#   - Community-curated default manifests (versioned)
+
+# ─── SECTION 1: Manifest metadata ───────────────────────────────────────
+manifest:
+  version: "0.0.1-draft"          # semver; tracks manifest format itself
+  generated_at: "2026-06-01"      # ISO date; updated on each regeneration
+  author: "raghu"                  # who maintains this manifest
+  scope: "user"                    # "user" | "project" | "community"
+  description: >
+    Personal Skill Advisor manifest for HireAstra dogfooding.
+    Includes gstack, vercel, superpowers ecosystems.
+
+# ─── SECTION 2: Project profiles ────────────────────────────────────────
+# Each project profile defines which work-types apply, which file paths
+# route to which section, and which skills are available in this project.
+projects:
+
+  - id: "hireastra"
+    name: "HireAstra"
+    description: "AI résumé / job-search SaaS"
+    repo_roots:                   # Signal 0 — advisor activates in these paths
+      - "C:\\Users\\raghu\\Projects\\OnePersonAICompany"
+      - "C:\\Users\\raghu\\Projects\\HireAstra-design-sandbox"
+      - "C:\\Users\\raghu\\Projects\\HireAstra-Pricing-Model"
+
+    # Custom sections for this project (advisor splits triggers across them)
+    sections:
+      - id: "core-engine"
+        name: "§1 — Core Engine"
+        description: "Backend, billing, auth, AI provider, security"
+        owner: "core-engine-session"
+        file_globs:                # Signal 1 — paths that route here
+          - "src/lib/billing/**"
+          - "src/lib/credit-manager.ts"
+          - "src/lib/stripe.ts"
+          - "src/lib/plans.ts"
+          - "src/lib/auth/**"
+          - "src/lib/llm-chain.ts"
+          - "src/lib/ai-provider.ts"
+          - "src/app/api/**"
+          - "supabase/migrations/**"
+          - "supabase/schema.sql"
+          - "src/middleware.ts"
+          - "scripts/backfill-*"
+          - "MIGRATION_STATUS.md"
+          - "MIGRATION_DECISIONS.md"
+
+      - id: "design-brand"
+        name: "§2 — Design + Brand"
+        description: "Visual, brand, motion, public surfaces"
+        owner: "design-session"
+        file_globs:
+          - "src/app/globals.css"
+          - "tailwind.config.*"
+          - "src/app/layout.tsx"
+          - "src/app/page.tsx"
+          - "src/app/og/route.tsx"
+          - "src/app/maintenance/page.tsx"
+          - "src/components/landing/**"
+          - "src/components/Wordmark.tsx"
+          - "src/components/layout/**"
+          - "src/components/ftue/**"
+          - "src/components/ui/**"
+          - "public/brand/**"
+          - "public/favicon.svg"
+          - "HireAstra-design-sandbox/**"
+          - "HireAstra-Pricing-Model/**"
+
+# ─── SECTION 3: Skill inventory ─────────────────────────────────────────
+# Skills the advisor knows about. Each skill has triggers (when to suggest)
+# and a target section. Open-world rule applies: skills not in this manifest
+# can still be surfaced; the advisor proposes adding them.
+skills:
+
+  - name: "gstack:cso"
+    ecosystem: "gstack"
+    description: "Chief Security Officer mode — pre-merge security review"
+    when_to_use: >
+      Before merging a PR touching billing, auth, RLS, webhooks,
+      service-role, Stripe, or any sensitive data path.
+    what_it_touches:
+      - "src/lib/billing/**"
+      - "src/lib/auth/**"
+      - "src/app/api/billing/**"
+      - "supabase/migrations/**"
+    mutating: false               # cso reads + reports, doesn't auto-fix
+    section: "core-engine"
+    project: "hireastra"
+
+  - name: "gstack:ship"
+    ecosystem: "gstack"
+    description: "Land + deploy workflow — runs tests, reviews diff, bumps VERSION"
+    when_to_use: >
+      About to commit + push + open PR via manual cycle.
+    what_it_touches: []           # full repo; ship can touch anything
+    mutating: true                # ship modifies git state + may deploy
+    section: "core-engine"
+    project: "hireastra"
+
+  - name: "gstack:design-review"
+    ecosystem: "gstack"
+    description: >
+      Designer's eye QA — finds visual inconsistency, spacing issues,
+      hierarchy problems, AI slop patterns, slow interactions.
+    when_to_use: >
+      Finished a new page or visual component. OR founder used quality-
+      judgment phrasing ("premium", "feels like", "polish", "$X/mo").
+    what_it_touches:
+      - "src/components/**"
+      - "src/app/*.tsx"
+      - "*.html"
+    mutating: false
+    section: "design-brand"
+    project: "hireastra"
+    quality_judgment_trigger: true # special flag — overrides trivial-action skip
+
+  - name: "superpowers:brainstorming"
+    ecosystem: "superpowers"
+    description: >
+      Explores user intent, requirements and design before implementation.
+      MUST use before any creative work.
+    when_to_use: >
+      Starting any new feature, page mockup, or non-trivial implementation.
+      Triggers on ambiguous-scope phrases ("I want to add X but not sure how").
+    what_it_touches: []           # planning only
+    mutating: false
+    section: "any"                # cross-section: applies to §1 and §2
+    project: "hireastra"
+
+  - name: "superpowers:writing-plans"
+    ecosystem: "superpowers"
+    description: "Plan before code — multi-step task planning with review checkpoints"
+    when_to_use: >
+      Writing implementation plan for non-trivial chunk.
+    what_it_touches: []
+    mutating: false
+    section: "any"
+    project: "hireastra"
+
+  # ... additional skills follow the same shape ...
+
+# ─── SECTION 4: Work-type taxonomy ──────────────────────────────────────
+# Classifies the WORK first, then matches to skill surface.
+# Multi-type work surfaces multiple skills.
+work_types:
+
+  - id: "data-financials"
+    keywords: ["billing", "payment", "Stripe", "credits", "subscription", "refund", "webhook"]
+    default_section: "core-engine"
+
+  - id: "security-auth"
+    keywords: ["auth", "login", "session", "RLS", "security", "service-role"]
+    default_section: "core-engine"
+
+  - id: "ai-llm-scoring"
+    keywords: ["AI provider", "LLM", "prompt", "resume parsing", "ATS scoring"]
+    default_section: "core-engine"
+
+  - id: "infra-migration"
+    keywords: ["database", "migration", "schema", "RPC", "audit log", "cron"]
+    default_section: "core-engine"
+
+  - id: "perf-debug"
+    keywords: ["slow", "latency", "regression", "investigate", "profile"]
+    default_section: "core-engine"
+
+  - id: "visual-brand"
+    keywords: ["design", "brand", "color", "font", "typography", "motion", "animation",
+               "hero", "landing", "logo", "mockup", "layout", "UI", "button styling"]
+    default_section: "design-brand"
+
+  - id: "quality-judgment"
+    keywords: ["premium", "feels like", "polish", "$X/mo feel", "elevated",
+               "sophisticated", "luxury", "design-forward", "high-end"]
+    default_section: "design-brand"
+    overrides_trivial_action_skip: true  # special: this list overrides triviality
+
+  - id: "growth-loyalty-abuse"
+    keywords: ["promo", "referral", "campaign", "A/B test", "conversion", "funnel", "retention"]
+    default_section: "hybrid"     # surfaces multiple sections + proposes §3
+
+  - id: "ops-support"
+    keywords: ["help center", "support", "refund handling", "escalation", "dispute"]
+    default_section: "propose-new"  # CASE C → propose §N
+
+  - id: "spec-ambiguous"
+    keywords: ["not sure how", "let's brainstorm", "what would Y look like",
+               "I want to add", "I'm thinking about"]
+    default_action: "invoke_brainstorming_or_spec_first"
+
+# ─── SECTION 5: Loop-Prevention Layer (universal, not configurable) ─────
+# These rules are HARD safety. The standalone product ships with them as
+# defaults. Users can't disable them.
+loop_prevention:
+  L1_goal_anchor:
+    enabled: true
+    enforcement: "session-start declaration required"
+
+  L2_invocation_budget:
+    enabled: true
+    max_mutating_per_goal: 2
+    read_only_exempt:
+      - "brainstorming"
+      - "spec"
+      - "writing-plans"
+      - "code-review"
+      - "design-review"
+      - "verification-before-completion"
+      - "investigate"
+      - "browse"
+      - "qa-only"
+      - "health"
+
+  L3_regression_detection:
+    enabled: true
+    require_pre_post_conditions: true
+    on_postcondition_failure: "immediate_rollback"
+
+  L4_scope_creep_alarm:
+    enabled: true
+    max_file_set_size: 8
+    on_section_boundary_cross: "pause_and_surface"
+
+  L5_cycle_detection:
+    enabled: true
+    abort_on_repeated_skill: true
+    abort_on_pattern: "A→B→A"
+
+# ─── SECTION 6: Red-flag phrases (rationalization tripwires) ────────────
+# When the agent's inner voice produces any of these phrases verbatim,
+# STOP and re-evaluate. Extensible — community contributions welcome.
+red_flag_phrases:
+  - phrase: "There's no row for that, I'll just lean on what fires"
+    catches: "anchor_bias"
+    counter_rule: "List ALL work-types this task spans; match each separately"
+
+  - phrase: "It's a small CSS tweak, anti-pattern says don't suggest skills for trivial actions"
+    catches: "trivial_action_misfire"
+    counter_rule: "Quality-judgment phrasing OVERRIDES trivial-action skip. Re-scan for premium/feels-like/polish phrases."
+
+  - phrase: "Skill X is in the inventory but not the trigger table, so I shouldn't surface it"
+    catches: "closed_world_assumption"
+    counter_rule: "Trigger tables are GUIDANCE, not whitelist. Surface anyway, propose adding."
+
+  - phrase: "I'll just fix this quickly while I'm here"
+    catches: "loop_creep_onset"
+    counter_rule: "STOP. Park unrelated finding. Return to L1 goal."
+
+  - phrase: "One more skill should do it"
+    catches: "L2_budget_violation"
+    counter_rule: "STOP. Surface to user for --continue-chain permission."
+
+  - phrase: "It's related so I should chain"
+    catches: "loop_creep_rationalization"
+    counter_rule: "STOP. The chain itself is the warning."
+
+# ─── SECTION 7: Output formatting ───────────────────────────────────────
+output:
+  technical_format: |
+    **Skill suggestion:** `<skill-name>` — `<what it would do here>`. Want me to invoke it?
+
+  plain_language_format: |
+    I'd suggest using `<skill-name>` for this — it would <plain-english value>. Want me to set that up?
+
+  risk_format: |
+    **Risk flag:** about to `<destructive action>`. `<skill-name>` would `<safety mechanism>`. Recommend invoking first.
+
+  user_persona_preference: "technical"   # "technical" | "plain-language" | "auto"
+
+# ─── SECTION 8: Auto-discovery (future capability) ──────────────────────
+# When implemented, the advisor scans installed Claude Code plugins and
+# pre-populates the skills list. The user can then accept/reject/edit.
+auto_discovery:
+  enabled: false                  # not yet implemented
+  scan_paths:
+    - "~/.claude/plugins/"
+    - "/usr/local/share/claude/skills/"
+  ecosystems_to_scan:
+    - "gstack"
+    - "vercel"
+    - "superpowers"
+    - "claude-md-management"
+    - "postman"
+    - "huggingface-skills"
+    - "frontend-design"
+  scan_frequency: "on-session-start"
+  conflict_resolution: "user-prompt"  # if a discovered skill conflicts with manifest
+
+# ─── END OF DRAFT ───────────────────────────────────────────────────────
+#
+# NEXT STEPS for this draft:
+#   1. Validate the schema against real HireAstra usage (does it capture
+#      everything the live v0 does?)
+#   2. Add an example user-defined custom skill entry
+#   3. Define how multiple manifests merge (user + project + community)
+#   4. Decide YAML vs JSON vs TOML based on Phase 2 user research
+#   5. Build a validator (JSON Schema or similar) to catch malformed manifests
+#
+# Open questions:
+#   - How does plain-language output map per-skill? (Maybe skill entries
+#     get an optional `plain_language_value` field)
+#   - How does versioning work for skill entries when ecosystems update?
+#   - Should sections support inheritance (project extends community defaults)?
