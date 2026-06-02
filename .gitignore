@@ -1,0 +1,50 @@
+# OS noise
+.DS_Store
+Thumbs.db
+desktop.ini
+ehthumbs.db
+
+# Editor noise
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.classpath
+
+# Logs
+*.log
+
+# Local environment / secrets
+.env
+.env.local
+.env.*.local
+
+# Node (if/when the project grows runtime dependencies)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Python (if/when used for tooling)
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+
+# Build output
+dist/
+build/
+out/
+
+# Test output
+coverage/
+*.lcov
+
+# Local working notes that shouldn't be public
+scratch/
+notes/
+TODO.local.md
