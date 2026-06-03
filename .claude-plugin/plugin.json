@@ -1,0 +1,13 @@
+{
+  "name": "ai-skill-advisor",
+  "displayName": "aiSkillAdvisor",
+  "description": "Always-on advisor that suggests the right Claude Code skill at the right moment.",
+  "version": "0.0.1",
+  "author": {
+    "name": "Raghu Akula",
+    "url": "https://github.com/AmRaghuAkula"
+  },
+  "repository": "https://github.com/AmRaghuAkula/aiSkillAdvisor",
+  "license": "PolyForm-Noncommercial-1.0.0",
+  "hooks": "./hooks/hooks.json"
+}
