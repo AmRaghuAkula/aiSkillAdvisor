@@ -3,36 +3,28 @@ import { execFileSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 import { dirname, resolve } from "node:path";
 import { existsSync } from "node:fs";
+import { ADVISOR_MARKER } from "../src/hooks/session-start.js";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const wrapper = resolve(here, "../dist/hooks/run-session-start.js");
 
 describe("run-session-start wrapper (built)", () => {
   beforeAll(() => {
-    // The wrapper is the compiled output; the build step must run first.
     if (!existsSync(wrapper)) {
-      throw new Error(
-        `Build artifact missing: ${wrapper}. Run \`npm run build\` before the integration test.`,
-      );
+      throw new Error(`Build artifact missing: ${wrapper}. Run \`npm run build\` first.`);
     }
   });
 
-  it("reads hook JSON from stdin and writes hook output JSON to stdout", () => {
-    const input = JSON.stringify({
-      session_id: "x",
-      cwd: "/tmp/p",
-      hook_event_name: "SessionStart",
-    });
-
-    const stdout = execFileSync("node", [wrapper], {
-      input,
-      encoding: "utf8",
-    });
-
-    const parsed = JSON.parse(stdout);
+  it("emits hook JSON containing the advisor marker for a valid payload", () => {
+    const input = JSON.stringify({ session_id: "x", cwd: "/tmp/p", hook_event_name: "SessionStart" });
+    const out = execFileSync("node", [wrapper], { input, encoding: "utf8" });
+    const parsed = JSON.parse(out);
     expect(parsed.hookSpecificOutput.hookEventName).toBe("SessionStart");
-    expect(parsed.hookSpecificOutput.additionalContext).toContain(
-      "aiSkillAdvisor active",
-    );
+    expect(parsed.hookSpecificOutput.additionalContext).toContain(ADVISOR_MARKER);
+  });
+
+  it("emits nothing and exits 0 for empty stdin (non-blocking contract)", () => {
+    const out = execFileSync("node", [wrapper], { input: "", encoding: "utf8" });
+    expect(out).toBe("");
   });
 });
