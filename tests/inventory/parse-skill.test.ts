@@ -29,4 +29,10 @@ describe("parseSkillFile", () => {
     const p = writeSkill(dir, `---\nname: x\n---\nbody`);
     expect(parseSkillFile(p)).toEqual({ name: "x", description: "" });
   });
+
+  it("handles a file with no frontmatter at all", () => {
+    const dir = join(tmpdir(), `sk-${Date.now()}`, "plainskill");
+    const p = writeSkill(dir, `# Just a heading\n\nNo frontmatter here.`);
+    expect(parseSkillFile(p)).toEqual({ name: "plainskill", description: "" });
+  });
 });
