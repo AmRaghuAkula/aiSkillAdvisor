@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { mkdirSync, writeFileSync } from "node:fs";
+import { mkdirSync, writeFileSync, symlinkSync } from "node:fs";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 import { scanSkillsDir } from "../../src/inventory/scan-skills-dir.js";
@@ -31,5 +31,27 @@ describe("scanSkillsDir", () => {
 
   it("returns [] when the directory does not exist", () => {
     expect(scanSkillsDir(join(tmpdir(), `missing-${Date.now()}`), "x")).toEqual([]);
+  });
+
+  it("does not throw if a child entry vanishes mid-scan (statSync guard)", () => {
+    const root = join(tmpdir(), `skills-guard-${Date.now()}`);
+    mkdirSync(root, { recursive: true });
+    makeSkill(root, "ok", "fine.");
+    const entries = scanSkillsDir(root, "src");
+    expect(entries.map((e) => e.name)).toEqual(["ok"]);
+  });
+
+  it("does not follow a symlinked child directory (no traversal)", () => {
+    const root = join(tmpdir(), `skills-link-${Date.now()}`);
+    const outside = join(tmpdir(), `outside-${Date.now()}`);
+    makeSkill(outside, "secret", "should not be read.");
+    mkdirSync(root, { recursive: true });
+    try {
+      symlinkSync(join(outside, "secret"), join(root, "linked"), "dir");
+    } catch {
+      return; // symlink not permitted in this environment; skip
+    }
+    const names = scanSkillsDir(root, "src").map((e) => e.name);
+    expect(names).not.toContain("secret");
   });
 });

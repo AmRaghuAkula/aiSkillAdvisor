@@ -40,7 +40,7 @@ export function resolveScanLocations(
     if (!isEnabled) continue;
     const records = installedPlugins[key];
     const installPath = Array.isArray(records) ? records[0]?.installPath : undefined;
-    if (typeof installPath === "string") {
+    if (typeof installPath === "string" && installPath.trim()) {
       locations.push({ skillsDir: join(installPath, "skills"), source: key });
     }
   }
