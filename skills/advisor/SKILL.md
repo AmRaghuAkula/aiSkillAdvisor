@@ -61,7 +61,7 @@ Classify each request into one or more:
 | **B** | Work crosses two work-types | Surface once: note it spans both; suggest the most relevant, flag the second. |
 | **C** | Novel domain, weak match | Surface once: offer the closest match OR note no installed skill fits; don't force it. |
 | **D** | Same-session pivot | Quietly switch focus to the new work-type. |
-| **E** | Multi-type work (e.g. promo = billing + growth) | Surface ALL applicable skills, not just the first. **CASE E supersedes CASE B.** |
+| **E** | Multi-type work (e.g. promo = billing + growth) | Surface ALL applicable skills, not just the first — **one skill per applicable work-type, back-to-back.** This is the one explicit exception to the "one suggestion at a time" rule below. **CASE E supersedes CASE B.** |
 | **F** | Read-only / Q&A / exploration | Skip — no suggestion on lookup turns. |
 
 ---

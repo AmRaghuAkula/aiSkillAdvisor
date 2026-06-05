@@ -18,10 +18,10 @@ describe("sanitizeDescription", () => {
     expect(out).not.toContain("END INSTALLED SKILLS");
   });
 
-  it("collapses newlines and truncates to 200 chars", () => {
+  it("collapses newlines and truncates to ~100 chars", () => {
     const out = sanitizeDescription("a\nb\n" + "x".repeat(300));
     expect(out).not.toContain("\n");
-    expect(out.length).toBeLessThanOrEqual(200);
+    expect(out.length).toBeLessThanOrEqual(100);
   });
 });
 
