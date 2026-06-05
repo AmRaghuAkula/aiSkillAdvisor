@@ -1,11 +1,10 @@
 import { buildSessionStartOutput } from "./session-start.js";
+import { sweepInventory } from "../inventory/sweep.js";
 import type { SessionStartHookInput } from "../types.js";
 
 async function readStdin(): Promise<string> {
   const chunks: Buffer[] = [];
-  for await (const chunk of process.stdin) {
-    chunks.push(chunk as Buffer);
-  }
+  for await (const chunk of process.stdin) chunks.push(chunk as Buffer);
   return Buffer.concat(chunks).toString("utf8");
 }
 
@@ -16,12 +15,17 @@ async function main(): Promise<void> {
   try {
     input = JSON.parse(raw) as SessionStartHookInput;
   } catch {
-    // No/invalid stdin — emit nothing and succeed (non-blocking, exit 0).
-    process.exit(0);
+    process.exit(0); // no/invalid stdin → non-blocking success
   }
 
-  const output = buildSessionStartOutput(input);
-  process.stdout.write(JSON.stringify(output));
+  let count = 0;
+  try {
+    count = sweepInventory().skills.length;
+  } catch {
+    count = 0; // never let a sweep error crash the session
+  }
+
+  process.stdout.write(JSON.stringify(buildSessionStartOutput(input, count)));
   process.exit(0);
 }
 
