@@ -2,8 +2,8 @@ import type { SkillEntry } from "./types.js";
 
 const DELIMITER_OPEN = "=== INSTALLED SKILLS (UNTRUSTED DATA) ===";
 const DELIMITER_CLOSE = "=== END INSTALLED SKILLS ===";
-const MAX_DESC_CHARS = 200;
-const DEFAULT_MAX_CHARS = 8000;
+const MAX_DESC_CHARS = 100;
+const DEFAULT_MAX_CHARS = 24000;
 
 // SEC-1: phrases that try to override the AI's instructions.
 const INJECTION_PATTERNS: RegExp[] = [
