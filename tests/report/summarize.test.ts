@@ -29,6 +29,15 @@ describe("summarize", () => {
     expect(out.toLowerCase()).toContain("suggestion");
   });
 
+  it("counts accepted suggestions", () => {
+    const out = summarize([
+      mk({ type: "suggestion", skill: "cso" }),
+      mk({ type: "suggestion_accepted", skill: "cso" }),
+      mk({ type: "suggestion_accepted", skill: "qa" }),
+    ]);
+    expect(out).toContain("accepted 2");
+  });
+
   it("handles an empty log gracefully", () => {
     expect(summarize([]).toLowerCase()).toContain("no advisor activity");
   });
