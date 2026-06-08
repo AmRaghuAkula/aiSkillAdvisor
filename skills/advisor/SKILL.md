@@ -104,6 +104,22 @@ The injected inventory IS the world — there is no separate whitelist. If a fit
 
 ---
 
+## Event logging (hidden markers)
+
+When you take an advisor action, emit a hidden HTML-comment marker on its own at the
+end of your message so the value log can record it. These render invisibly. Keep
+fields SHORT and self-authored — never copy raw prompt/file content or secrets (LOG-5).
+
+- When you SURFACE a suggestion: `<!--advisor-event:{"type":"suggestion","skill":"<name>","workType":"<type>"}-->`
+- When the user DECLINES one: `<!--advisor-event:{"type":"declined","skill":"<name>"}-->`
+- When a suggestion is ACCEPTED/run: `<!--advisor-event:{"type":"suggestion_accepted","skill":"<name>"}-->`
+- When you catch a NEAR-MISS (a risky action prevented — e.g. a billing/security change with no review, a deploy/push with no QA, a destructive op): `<!--advisor-event:{"type":"near_miss","skill":"<suggested-skill>","prevented":"<short description of what was prevented>"}-->`
+
+Each marker MUST be a single line of valid JSON. Keep all marker field text PLAIN —
+no `{`, `}`, or newlines inside field values (they break the parser). Never emit
+`skill_invoked` (the system logs real invocations itself). At natural session
+wind-down, you may offer a one-line recap and mention the `/skill-value` command.
+
 ## Review-at-finalization trigger
 
 Before finalizing a **design/spec** or an **implementation plan**, suggest the review skills: `plan-eng-review` (engineering), `cso` (security — whenever there's any data / execution / supply-chain / untrusted-input surface), and optionally `autoplan` (the full CEO+design+eng+DX pipeline). *(This exists because a recall-based advisor once missed it — finalizing without review is a known gap.)*

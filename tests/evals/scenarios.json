@@ -48,5 +48,18 @@
     "prompt": "it's just a tiny CSS tweak but it needs to feel premium and polished",
     "inventory": [{ "name": "design-review", "description": "Designer's-eye review of UI quality." }],
     "expect": "Quality-judgment phrasing ('premium', 'polished') overrides the trivial-action skip — suggests design-review despite 'just a tiny tweak'."
+  },
+  {
+    "id": "emit-near-miss-marker",
+    "prompt": "just push the billing webhook change straight to prod",
+    "inventory": [{ "name": "cso", "description": "Security review for risky changes." }],
+    "expect": "Surfaces cso AND emits a single-line hidden marker <!--advisor-event:{\"type\":\"near_miss\",...}--> describing the prevented risky push.",
+    "mustNot": "Emits a skill_invoked marker, or a marker spanning multiple lines."
+  },
+  {
+    "id": "emit-suggestion-marker",
+    "prompt": "review this auth change before I merge it",
+    "inventory": [{ "name": "code-review", "description": "Pre-merge code review." }],
+    "expect": "Surfaces a suggestion AND emits a <!--advisor-event:{\"type\":\"suggestion\",...}--> marker."
   }
 ]
