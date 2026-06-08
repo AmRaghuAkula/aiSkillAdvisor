@@ -239,15 +239,33 @@ Then present the output as-is. Do not editorialize or invent numbers — the CLI
 source of truth.
 ```
 
-- [ ] **Step 7: Rebuild and run the full suite**
+- [ ] **Step 7: Add a runner integration assertion (proves `resolveReportCliPath` works end-to-end)**
+
+The unit test covers the builder; this proves the *runner* actually resolves a real path
+via `import.meta.url`. Add this case to `tests/run-session-start.int.test.ts`, inside the
+`describe("run-session-start wrapper (built)", …)` block:
+
+```typescript
+  it("injects an absolute value-report CLI path pointing at the built CLI", () => {
+    const input = JSON.stringify({ session_id: "x", cwd: "/tmp/p", hook_event_name: "SessionStart" });
+    const out = execFileSync("node", [wrapper], { input, encoding: "utf8" });
+    const ctx = JSON.parse(out).hookSpecificOutput.additionalContext as string;
+    expect(ctx.toLowerCase()).toContain("value report");
+    expect(ctx).toMatch(/dist[\\/]report[\\/]cli\.js/); // tolerant of OS path separator
+  });
+```
+
+(This test runs the *built* wrapper, so it requires Step 8's rebuild to have run.)
+
+- [ ] **Step 8: Rebuild and run the full suite**
 
 Run: `npm run build && npm test`
-Expected: build succeeds; all tests pass.
+Expected: build succeeds; all tests pass (including the new integration assertion).
 
-- [ ] **Step 8: Commit**
+- [ ] **Step 9: Commit**
 
 ```bash
-git add src/hooks/session-start.ts src/hooks/run-session-start.ts tests/session-start.test.ts commands/skill-value.md
+git add src/hooks/session-start.ts src/hooks/run-session-start.ts tests/session-start.test.ts tests/run-session-start.int.test.ts commands/skill-value.md
 git commit -m "feat: inject resolved value-report CLI path so /skill-value works when installed"
 ```
 
@@ -277,7 +295,7 @@ build/
 out/
 ```
 
-- [ ] **Step 2: Create `.gitattributes`**
+- [ ] **Step 2: Create `.gitattributes` (repo-wide LF — per review decision D1)**
 
 Create `.gitattributes` at the repo root:
 
@@ -290,27 +308,43 @@ dist/**/*.js text eol=lf
 *.gif binary
 ```
 
-- [ ] **Step 3: Do the authoritative build**
+- [ ] **Step 3: Isolate the line-ending normalization in its own commit**
 
-Run: `npm run build`
-Expected: `dist/` regenerated with LF endings, version + path-fix included.
+The repo has `core.autocrlf=true` + ~79 tracked text files, so the rule above will
+renormalize many files. Keep that churn OUT of the functional commits so it's reviewable
+and revertable on its own:
 
-- [ ] **Step 4: Stage and verify `dist/` is now tracked**
+```bash
+git add .gitignore .gitattributes
+git add --renormalize .
+git commit -m "chore: normalize line endings to LF (.gitattributes)"
+```
+Expected: this commit contains `.gitignore`, `.gitattributes`, and line-ending-only
+changes to existing text files (no logic changes). It must NOT contain `dist/` (still
+ignored until the next step) or any `src/` content edits.
+
+- [ ] **Step 4: Do the authoritative build (clean install first → matches CI's pinned tsc)**
+
+Run: `npm ci && npm run build`
+Expected: deps install from the lockfile (so local `tsc` == the version CI uses);
+`dist/` regenerated with LF endings, version + path-fix included.
+
+- [ ] **Step 5: Stage and verify `dist/` is now tracked**
 
 Run:
 ```bash
-git add .gitignore .gitattributes dist
+git add dist
 git status --porcelain -- dist | head
 ```
 Expected: `dist/**.js` files appear staged (lines starting with `A`).
 
-- [ ] **Step 5: Commit**
+- [ ] **Step 6: Commit the prebuilt output**
 
 ```bash
-git commit -m "build: ship prebuilt dist/ (+ .gitattributes for stable line endings)"
+git commit -m "build: ship prebuilt dist/ for no-build install"
 ```
 
-- [ ] **Step 6: Prove the build is reproducible (the invariant CI will enforce)**
+- [ ] **Step 7: Prove the build is reproducible (the invariant CI will enforce)**
 
 Run:
 ```bash
@@ -589,3 +623,28 @@ Record in `project-current-status.md`: Phase 1 merged + installed + verified; th
 **Placeholder scan:** none — every code/config step shows the actual content.
 
 **Type/name consistency:** `buildSessionStartOutput(input, inventoryBlock?, reportCliPath?)` defined in Task 2 Step 3, exercised with the 3-arg form in Task 2 Step 1 and called in Task 2 Step 5. `resolveReportCliPath()` defined and used in the same runner file. Marketplace plugin name `ai-skill-advisor` matches `plugin.json`; install id is `ai-skill-advisor@ai-skill-advisor` (marketplace name == plugin name), used consistently in `INSTALL.md` and the PR body.
+
+---
+
+## GSTACK REVIEW REPORT
+
+| Review | Trigger | Why | Runs | Status | Findings |
+|--------|---------|-----|------|--------|----------|
+| Eng Review | `/plan-eng-review` | Architecture & tests (required) | 1 | clean (folded) | 1 arch (decided D1), 1 quality + 1 test gap (folded in) |
+
+**Step 0 (scope):** accepted as-is — ~13 files but mostly tiny config/docs + generated `dist/`; reuses existing fallback, exec-form hooks, and CI. No new services/abstractions.
+
+**Findings & resolutions:**
+- **[P1] arch — `.gitattributes` scope.** Repo has `core.autocrlf=true` + 79 tracked text files; a repo-wide `* text=auto eol=lf` renormalizes all of them. **Decision D1: keep repo-wide** (user choice, against the narrow recommendation). Mitigation folded in: Task 3 isolates the normalization in its own `git add --renormalize` commit so the churn is reviewable/revertable separately from logic.
+- **[P2] quality — local vs CI `tsc` drift.** Committed `dist/` must match the Linux CI rebuild. Folded in: Task 3 Step 4 runs `npm ci` before the authoritative build (aligns local `tsc` with the lockfile'd version CI uses). Task 7 re-verifies via `npm ci && build && git status --porcelain -- dist` (empty = reproducible).
+- **[P2] test gap — `resolveReportCliPath()` (the EF3 fix) untested in the runner.** Folded in: Task 2 Step 7 adds a built-wrapper integration assertion that the injected context contains a path matching `/dist[\\/]report[\\/]cli\.js/`.
+
+**Test coverage:** unit (builder path-injection: present + absent) + integration (runner resolves a real path) + marketplace↔plugin consistency guard + CI dist-freshness guard. No code path in the diff is left untested.
+
+**Failure modes:** Node missing on the user's PATH → all hooks silently no-op (inherent to the plugin; documented as a requirement in `INSTALL.md`; out of scope to auto-detect here). Non-deterministic `dist/` → caught by the CI freshness guard (hard fail, not silent).
+
+**NOT in scope:** Phase 2 launch README · installing other skills (SP5) · L2/L5 hardening + multi-turn evals (SP3b) · auto-update beyond `/plugin` · narrowing `.gitattributes` (user chose repo-wide).
+
+**Parallelization:** Sequential implementation — tasks share `dist/`, the manifests, and the hook files; no independent lanes.
+
+**VERDICT: ENG CLEARED — ready to implement.** One architectural decision (D1) made by the user; two improvements folded into the plan; zero critical gaps.
