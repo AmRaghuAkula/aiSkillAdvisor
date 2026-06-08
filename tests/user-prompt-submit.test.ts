@@ -13,4 +13,10 @@ describe("buildUserPromptSubmitOutput", () => {
     const out = buildUserPromptSubmitOutput([]);
     expect(out.hookSpecificOutput.additionalContext.toLowerCase()).toContain("advisor");
   });
+
+  it("instructs the model to emit a hidden advisor-event marker every turn", () => {
+    const out = buildUserPromptSubmitOutput([]).hookSpecificOutput.additionalContext;
+    expect(out).toContain("advisor-event");
+    expect(out.toLowerCase()).toContain("near-miss");
+  });
 });
