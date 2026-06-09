@@ -21,8 +21,11 @@ export function latestAssistantText(transcriptPath: string): string {
   const lines = raw.split("\n").map((l) => l.trim()).filter(Boolean);
   for (let i = lines.length - 1; i >= 0; i--) {
     try {
-      const o = JSON.parse(lines[i]) as { role?: string; content?: unknown };
-      if (o && o.role === "assistant") return extractText(o.content);
+      const o = JSON.parse(lines[i]) as { role?: string; content?: unknown; message?: { role?: string; content?: unknown } };
+      // Real Claude Code transcripts nest role/content under `message`; older/test
+      // fixtures use a flat shape. Prefer `message` when present.
+      const m = o && typeof o === "object" && o.message && typeof o.message === "object" ? o.message : o;
+      if (m && m.role === "assistant") return extractText(m.content);
     } catch {
       /* skip malformed line */
     }
