@@ -18,4 +18,23 @@ describe("buildSessionStartOutput", () => {
     const out = buildSessionStartOutput({ session_id: "t", hook_event_name: "SessionStart" } as never);
     expect(out.hookSpecificOutput.additionalContext).toContain(ADVISOR_MARKER);
   });
+
+  it("injects the value-report CLI path when one is provided", () => {
+    const out = buildSessionStartOutput(
+      { session_id: "t", cwd: "/tmp/p", hook_event_name: "SessionStart" },
+      undefined,
+      "/home/u/.claude/plugins/cache/ai-skill-advisor/dist/report/cli.js",
+    );
+    const ctx = out.hookSpecificOutput.additionalContext;
+    expect(ctx).toContain("/home/u/.claude/plugins/cache/ai-skill-advisor/dist/report/cli.js");
+    expect(ctx.toLowerCase()).toContain("value report");
+  });
+
+  it("omits the report line when no CLI path is provided", () => {
+    const out = buildSessionStartOutput(
+      { session_id: "t", cwd: "/tmp/p", hook_event_name: "SessionStart" },
+      undefined,
+    );
+    expect(out.hookSpecificOutput.additionalContext.toLowerCase()).not.toContain("value report");
+  });
 });
