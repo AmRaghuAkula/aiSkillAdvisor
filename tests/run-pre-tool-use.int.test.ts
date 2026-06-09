@@ -51,4 +51,15 @@ describe("run-pre-tool-use gate (built)", () => {
     const out = run({ tool_name: "Bash", tool_input: {}, session_id: "s4" });
     expect(out.trim()).toBe("");
   });
+
+  it("fail-open: empty or malformed stdin exits 0 and emits nothing", () => {
+    for (const bad of ["", "not json", "{"]) {
+      const out = execFileSync("node", [wrapper], {
+        input: bad,
+        encoding: "utf8",
+        env: { ...process.env, CLAUDE_PLUGIN_DATA: dataDir },
+      });
+      expect(out.trim()).toBe("");
+    }
+  });
 });
