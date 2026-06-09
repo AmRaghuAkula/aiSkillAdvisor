@@ -1,0 +1,6 @@
+# Normalize line endings; keep committed build output stable across OSes.
+* text=auto eol=lf
+dist/**/*.js text eol=lf
+*.png binary
+*.jpg binary
+*.gif binary
