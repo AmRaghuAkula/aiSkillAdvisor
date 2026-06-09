@@ -167,15 +167,21 @@ describe("evaluateBudget (L2 budget + L5 cycle)", () => {
     expect(evaluateBudget([], { skill: "cso", stateChanging: true }).action).toBe("allow");
   });
 
-  it("L5: asks when the same skill already ran this session", () => {
-    const d = evaluateBudget([inv("cso", true)], { skill: "cso", stateChanging: true });
+  it("L5: asks on an immediate back-to-back repeat (same skill twice in a row)", () => {
+    const d = evaluateBudget([inv("design-review", false)], { skill: "design-review", stateChanging: false });
     expect(d.action).toBe("ask");
-    expect(d.reason).toMatch(/already run|loop|L5/i);
+    expect(d.reason).toMatch(/twice in a row|loop|L5/i);
   });
 
-  it("L5: matches on the bare name across plugin-qualified ids", () => {
-    const d = evaluateBudget([inv("gstack:cso", true)], { skill: "cso", stateChanging: true });
+  it("L5: matches the bare name across plugin-qualified ids (back-to-back)", () => {
+    const d = evaluateBudget([inv("gstack:design-review", false)], { skill: "design-review", stateChanging: false });
     expect(d.action).toBe("ask");
+  });
+
+  it("L5: does NOT fire when the same skill ran earlier but NOT back-to-back", () => {
+    // design-review on feature A, then qa-only, now design-review on feature B — legit, not a loop
+    const prior = [inv("design-review", false), inv("qa-only", false)];
+    expect(evaluateBudget(prior, { skill: "design-review", stateChanging: false }).action).toBe("allow");
   });
 
   it("L2: allows the 1st and 2nd state-changing run, asks on the 3rd", () => {
@@ -189,6 +195,11 @@ describe("evaluateBudget (L2 budget + L5 cycle)", () => {
     const prior = [inv("brainstorming", false), inv("review", false), inv("health", false)];
     const d = evaluateBudget(prior, { skill: "qa-only", stateChanging: false });
     expect(d.action).toBe("allow");
+  });
+
+  it("L2: a read-only pending skill never trips the budget, even after 2 state-changing runs", () => {
+    const prior = [inv("deploy", true), inv("migrate", true)];
+    expect(evaluateBudget(prior, { skill: "qa-only", stateChanging: false }).action).toBe("allow");
   });
 
   it("ignores non-invocation events when counting", () => {
@@ -225,9 +236,12 @@ const bare = (s: string): string => (s.includes(":") ? (s.split(":").pop() as st
 
 /**
  * Deterministic loop-prevention over a session's invocation log.
- * - L5 (cycle): the same skill already ran this session → ask.
- * - L2 (budget): asking before the 3rd state-changing run this session.
- * Pure + total: callers pass the session's prior events; this never throws.
+ * - L5 (cycle): the same skill is about to run BACK-TO-BACK (immediate repeat) → ask.
+ *   Narrow on purpose: re-running a skill on a *different* feature later in the
+ *   session is legitimate, so only an immediate repeat trips here. Broader
+ *   A→B→A / per-goal cycles stay the brain's job (L5 as instruction).
+ * - L2 (budget): ask before the 3rd state-changing run this session.
+ * Pure + total: callers pass the session's prior events (chronological); never throws.
  */
 export function evaluateBudget(
   priorSessionEvents: AdvisorEvent[],
@@ -236,11 +250,12 @@ export function evaluateBudget(
   const invocations = priorSessionEvents.filter((e) => e.type === "skill_invoked" && typeof e.skill === "string");
   const pendingBare = bare(pending.skill);
 
-  // L5 — cycle/repeat
-  if (invocations.some((e) => bare(e.skill as string) === pendingBare)) {
+  // L5 — immediate cycle: same skill twice in a row
+  const last = invocations[invocations.length - 1];
+  if (last && bare(last.skill as string) === pendingBare) {
     return {
       action: "ask",
-      reason: `You've already run '${pendingBare}' this session. Running it again may be a loop (L5) — confirm it still serves your current goal.`,
+      reason: `'${pendingBare}' is about to run twice in a row — possible loop (L5). Confirm it still serves your current goal.`,
     };
   }
 
@@ -279,7 +294,7 @@ git commit -m "feat: deterministic L2 budget + L5 cycle logic (budget.ts)"
 - Modify: `src/hooks/run-pre-tool-use.ts`
 - Modify: `tests/run-pre-tool-use.int.test.ts`
 
-> **Design note for review:** the rail surfaces as a PreToolUse `permissionDecision: "ask"` (Claude Code's native non-allow option — there is no "soft warn" for PreToolUse). It is **fail-open**: any error, or no rail tripped, emits nothing and the tool proceeds. The deterministic `skill_invoked` logging is unchanged (still logged at PreToolUse). `plan-eng-review` should confirm `ask` vs allow-and-log-only and the budget threshold.
+> **Design (decided in eng-review — "Hybrid"):** the rail surfaces as a PreToolUse `permissionDecision: "ask"` (Claude Code's native non-allow option). **Fail-open**: any error, or no rail tripped, emits nothing and the tool proceeds. Deterministic `skill_invoked` logging is unchanged. Scope kept deliberately narrow so it doesn't nag: **L2** asks before the 3rd state-changing run; **L5** asks only on an *immediate back-to-back* repeat (not a session-wide repeat). Threshold + behavior are easy to re-tune after real use.
 
 - [ ] **Step 1: Write the failing integration tests**
 
@@ -582,7 +597,7 @@ Spec: `docs/superpowers/specs/2026-06-04-sp3-value-log-design.md`
 Plan: `docs/superpowers/plans/2026-06-09-sp3b-rails-and-capture-fix.md`
 
 ## Review notes
-- `plan-eng-review`-flagged: PreToolUse `ask` vs allow-and-log-only, and the budget threshold (currently ask before the 3rd state-changing run).
+- `plan-eng-review` decided **Hybrid**: L2 asks before the 3rd state-changing run; L5 asks only on an immediate back-to-back repeat (narrowed from session-wide to avoid nagging). Fail-open. Threshold easy to re-tune.
 
 🤖 Generated with [Claude Code](https://claude.com/claude-code)
 EOF
@@ -607,3 +622,27 @@ Expected: all checks pass (incl. dist-freshness guard).
 **Type/name consistency:** `evaluateBudget(priorSessionEvents, {skill, stateChanging})` + `BudgetDecision{action,reason?}` defined in Task 2, used identically in Task 3. `STATE_CHANGING_BUDGET = 2` (ask on the 3rd). `latestAssistantText` signature unchanged (Task 1). `assembleMultiTurn` defined + used in Task 4. `Scenario.prompt` made optional (Task 4) — existing single-turn scenarios still set it, so `assembleAdvisorContext` is unaffected.
 
 **Known minor:** the invocation is logged at PreToolUse even if the user then denies the `ask` (logs an "attempted" run). Pre-existing SP3a behavior; acceptable; noted for review.
+
+---
+
+## GSTACK REVIEW REPORT
+
+| Review | Trigger | Why | Runs | Status | Findings |
+|--------|---------|-----|------|--------|----------|
+| Eng Review | `/plan-eng-review` | Architecture & tests (required) | 1 | clean (decided) | 2 findings, both resolved into the plan |
+
+**Step 0 (scope):** accepted — ~2 new files, cohesive with the value-log work; strong reuse (`READ_ONLY_SKILLS`, `invocationEvent`, `readEvents`, `extractText`, eval harness); the capture fix is root-caused + proven against the live transcript.
+
+**Findings & resolutions:**
+- **[P2] L5 over-fired** (session-wide repeat ≠ "cycle for one goal"). **Decided (Hybrid):** narrowed to an *immediate back-to-back* repeat; broader cycles stay the brain's job. Folded into `budget.ts` + tests (added a "not back-to-back ⇒ allow" test).
+- **[P2] rail surfacing vs "advises, doesn't block".** **Decided (Hybrid):** PreToolUse `ask` only before the 3rd state-changing run (L2) + immediate repeats (L5); fail-open; threshold re-tunable. Not a hard deny; not naggy.
+
+**Test coverage:** capture fix → real-schema regression test (Task 1); `budget.ts` → unit tests incl. the narrowing + read-only-pending cases (Task 2); hook gate → integration tests for allow / L5 / L2 / non-Skill (Task 3); decline-then-no-repeat → assisted multi-turn (Task 4). No new code path left untested.
+
+**Failure modes:** budget read fails → fail-open allow (tested try/catch). Transcript unreadable/odd schema → `latestAssistantText` returns "" (no crash). No silent-failure critical gaps.
+
+**NOT in scope:** L1/L3/L4 as code (judgment-bound — stay brain instructions) · A→B→A / per-goal cycle detection (kept as brain L5) · changing the marker parser (already correct) · report/CLI changes.
+
+**Parallelization:** sequential — Tasks 1–3 share `src/hooks/` + `dist/`; no independent lanes.
+
+**VERDICT: ENG CLEARED — ready to implement.** 2 findings, both resolved into the plan; 0 unresolved; 0 critical gaps.
