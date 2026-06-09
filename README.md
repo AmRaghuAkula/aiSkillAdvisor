@@ -1,155 +1,208 @@
 # aiSkillAdvisor
 
-> Helping non-technical AI enthusiasts get the best out of the skills available to their AI agents — by your side, understanding your context, and advising which skill to invoke for each task.
+> **The right skill, at the right moment — without being a senior engineer.**
+> An always-on advisor for Claude Code that watches what you're doing and suggests the installed skill that fits, flags risky moves before you make them, and quietly tracks the value it adds. Built for non-technical builders. Free for non-commercial use.
 
-This repo is aimed at helping non-tech AI enthusiasts to get best out of the skills. **aiSkillAdvisor** is designed to work by your side understanding your context and advise the skills needed to invoke to get the best out of each skill for respective tasks. This is also configurable to add more skills and it can auto-sweep to add available skills.
-
----
-
-## Why this exists
-
-The AI coding agent ecosystem (Claude Code, Cursor, Continue, Aider, etc.) now ships with **180+ specialized skills** across plugin namespaces:
-
-- **gstack** — ~40 skills for shipping, testing, design, security
-- **vercel** — ~25 skills for deployment, AI SDK, Next.js, storage
-- **superpowers** — ~13 skills for TDD, planning, verification
-- **claude-md-management**, **postman**, **hf-skills**, and many more
-
-Each skill is well-documented **if you know to look for it**.
-
-The problem: **the discovery problem**. Finding the right skill at the right moment is hard — and disproportionately hurts non-technical builders. Founders, indie hackers, product managers, designers — people with strong product instincts but limited engineering background — miss skill opportunities every day. They don't invoke `cso` before merging a billing change. They don't run `qa` before pushing UI. They don't fire `health` at phase boundaries. The result: lower-quality outputs, missed safety checks, longer iteration cycles.
-
-**aiSkillAdvisor closes that gap** by serving as an intelligent routing layer over the entire skill ecosystem.
+[![License: PolyForm Noncommercial 1.0.0](https://img.shields.io/badge/license-PolyForm--NC--1.0.0-blue.svg)](LICENSE)
 
 ---
 
-## Target user
+## The problem
 
-The **non-technical builder**:
+Claude Code (and the wider AI-agent ecosystem) now ships with **100+ specialized skills** — for security review, QA, design, deployment, planning, testing, and more. Each one is genuinely useful **if you know it exists and remember to use it at the right moment.**
 
-- Indie founders building SaaS products without a CTO
-- Product managers managing AI-assisted development
-- Designers shipping code with AI help
-- Solo entrepreneurs with product clarity but engineering gaps
+That "if" is the whole problem. It's a **discovery problem**, and it hits non-technical builders hardest:
 
-Also useful for technical builders who want **systematic skill discipline** instead of relying on memory + judgment alone.
+- You don't run a security review before merging a billing change — you didn't know there was a skill for it.
+- You push a UI change without QA — nobody reminded you.
+- You ask for "make it feel more premium" and never reach for the design skill that would nail it.
 
----
-
-## How it works (in plain English)
-
-When you ask your AI agent to do something — *"add a promo code to my checkout"* — aiSkillAdvisor reads the context (what files you're touching, what you're asking for, what kind of work it is) and **proactively suggests the right skill** before you even know one exists.
-
-Behind the scenes it runs three checks:
-
-1. **Where are you?** Repo root check — am I in a project the advisor knows about?
-2. **What are you doing?** Files + keywords + work-type classification (data, visual, security, growth, performance, ambiguous-scope)
-3. **What needs to fire?** Match work-type to skill — surface a one-line suggestion: *"Skill suggestion: `cso` — security review for billing PRs. Want me to invoke?"*
-
-Plus **loop-prevention rules** so the AI doesn't cascade from "fix A" → "break B" → "fix B" → "break C" until your original goal is lost.
+The skills are there. The knowing-when is not. **aiSkillAdvisor is the layer that knows when.**
 
 ---
 
-## Current status
+## What it does
 
-**v0 — dogfooding.** The first instance of aiSkillAdvisor is currently in active use as a memory mandate inside a Claude Code session working on a real SaaS product (the maintainer's primary project). Every refinement made during real-world usage is captured and will inform v1 of the standalone product.
+Once installed, aiSkillAdvisor rides along in every Claude Code session and:
 
-**See [`docs/HANDOFF.md`](docs/HANDOFF.md)** for the full state-of-work from the v0 dogfooding.
+- 🔎 **Sees what's installed.** On each session it sweeps every skill you have (across all your plugins) — no manual setup. (It found **139** in a typical environment.)
+- 💡 **Suggests the right skill, one at a time.** When your request clearly matches a skill, it surfaces a single plain-language nudge: *"Skill suggestion: `cso` — a security review before this billing change. Want me to run it?"*
+- 🛑 **Flags risky moments.** About to push straight to production, merge without review, or do something destructive? It raises a risk flag **before** it happens.
+- 🧮 **Tracks its own value.** A local log records suggestions made, accepted, declined — and especially **near-misses caught** (risky actions it flagged). Run `/skill-value` any time to see it.
+- 🤫 **Stays quiet when nothing fits.** It defaults to silence. No nagging, no stacking suggestions, and it never re-suggests something you declined.
 
-**Roadmap:**
-- ✅ v0 — discipline + algorithm validated in real-world dogfooding (TDD methodology, baseline scenarios passed)
-- ⏳ v0.5 — accumulate improvisations during 2-3 real pilots
-- ⏳ v1 — extract from dogfood instance into portable, configurable standalone product
-- ⏳ v1.1 — auto-discovery of installed skills, plain-language output layer
-- ⏳ v2 — multi-platform (Cursor, Continue, Aider in addition to Claude Code)
-
----
-
-## Core capabilities (target spec for v1)
-
-| Capability | v0 status | Standalone v1 goal |
-|---|---|---|
-| Work-type classification (data, visual, security, growth, perf, ambiguous) | ✅ working | Generic taxonomy |
-| Signal-based routing (file paths + keywords) | ✅ working | Per-project configurable |
-| Loop-prevention layer (L1-L5) | ✅ working | Universal default |
-| Rationalization tripwires (red flags + counter-rules) | ✅ working | Universal default |
-| Open-world skill inventory | ✅ working | Universal default |
-| Quality-judgment phrase override | ✅ working | Universal default |
-| Routing cases A-F (auto/cross-section/novel/pivot/multi-type/read-only) | ✅ working | Universal default |
-| **Configurable skill manifest** | ❌ not yet | **THE killer feature** |
-| **Auto-discovery of installed skills** | ❌ not yet | One-time setup |
-| **Plain-language output for non-tech users** | ❌ not yet | Critical UX |
-| **Per-project profile schema** | ❌ not yet | Configurable per-repo |
-| **CLI for managing skills + profiles** | ❌ not yet | Adoption blocker |
+It runs **on the AI already in your session** — no API key, no extra cost, and **nothing ever leaves your machine.**
 
 ---
 
-## Repository structure
+## Who it's for
+
+The **non-technical builder** — indie founders, product managers, designers, solo entrepreneurs: people with strong product instincts but limited engineering background, shipping real things with AI help.
+
+It's just as useful for technical builders who want **systematic skill discipline** instead of relying on memory and judgment alone.
+
+---
+
+## Install (no terminal needed)
+
+aiSkillAdvisor installs **inside Claude Code**. Install once at "user" scope and it's active in **every** project — and it writes nothing into your repos.
+
+> Requirement: Node.js installed (the advisor's hooks run on Node).
+
+1. Run `/plugin`
+2. **Marketplaces** tab → **Add marketplace** → paste `AmRaghuAkula/aiSkillAdvisor`
+3. **Discover** (or **Plugins**) tab → find **ai-skill-advisor** → **Install**
+4. Choose **User** scope
+5. Run `/reload-plugins`
+
+Prefer the terminal?
+
+```bash
+claude plugin marketplace add AmRaghuAkula/aiSkillAdvisor
+claude plugin install ai-skill-advisor@ai-skill-advisor --scope user
+```
+
+Full walkthrough + how to verify: [`INSTALL.md`](INSTALL.md).
+
+---
+
+## What it looks like
 
 ```
-aiSkillAdvisor/
-├── README.md                          # You are here
-├── LICENSE                            # PolyForm Noncommercial 1.0.0 (free personal; commercial via agreement)
-├── LICENSING.md                       # Plain-English licensing guide + commercial inquiry path
-├── docs/
-│   ├── HANDOFF.md                     # State of work from v0 dogfooding
-│   ├── PRODUCT_VISION.md              # Why this exists, target users, capabilities
-│   ├── ARCHITECTURE.md                # Algorithm: routing, work-types, L1-L5, tripwires
-│   ├── TESTING_PROTOCOL.md            # TDD methodology + baseline scenarios
-│   └── BACKLOG.md                     # Candidate improvements + open questions
-├── reference/
-│   ├── v0-skill-advisor.md            # Copy of the live v0 instance (source of truth)
-│   └── v0-improvisations.md           # Change log from dogfooding
-├── prototypes/
-│   └── manifest-schema-draft.yaml     # Proposed YAML schema for configurable skills
-└── .gitignore
+You:  I'm about to push the billing webhook change straight to production.
+
+aiSkillAdvisor:
+  ⚠️ Risk flag: about to deploy a billing change with no review.
+     `cso` would security-review it first. Recommend running it before you push.
+```
+
+```
+You:  /skill-value
+
+aiSkillAdvisor — value report (this session)
+  Suggestions made:        4   (accepted 2 · declined 1)
+  ⭐ Near-misses caught:    1
+     • billing change about to merge with no security review
 ```
 
 ---
 
-## Configurable skills capability
+## Under the hood
 
-aiSkillAdvisor is designed from day one to support **adding new skills** to its advisory context. Users will be able to:
+aiSkillAdvisor is a Claude Code plugin made of four lightweight hooks, a "brain" skill, and a local value log. It adds **no model cost** — the hooks just inject context, and the in-session AI does the thinking.
 
-- Register their own skills via a simple YAML manifest
-- Auto-discover skills installed via Claude Code plugins
-- Curate per-project profiles (this skill applies to billing PRs in *this* repo, but not in *that* one)
-- Contribute skill mappings back to the community via PR
+```
+  ┌─────────────────────────────────────────────────────────────┐
+  │  YOUR CLAUDE CODE SESSION                                     │
+  │                                                               │
+  │  SessionStart ──▶ sweep installed skills (all plugins +       │
+  │                   ~/.claude/skills) → inject the inventory    │
+  │                   + the advisor brain + the report path       │
+  │                                                               │
+  │  UserPromptSubmit ──▶ per message: "does an installed skill   │
+  │                       fit this request?" (default: silence)   │
+  │                                                               │
+  │     the BRAIN (advisor skill) decides → suggests / risk-flags │
+  │            │                                                  │
+  │            ▼                                                  │
+  │  PreToolUse(Skill) ──▶ logs every skill actually run          │
+  │  Stop ──────────────▶ records suggestions + near-misses       │
+  │            │                                                  │
+  │            ▼                                                  │
+  │     local value log  ($CLAUDE_PLUGIN_DATA, never leaves)      │
+  │            │                                                  │
+  │            ▼                                                  │
+  │     /skill-value ──▶ plain-language report                    │
+  └─────────────────────────────────────────────────────────────┘
+```
 
-A draft manifest schema is in [`prototypes/manifest-schema-draft.yaml`](prototypes/manifest-schema-draft.yaml).
+**Safety is built in:**
+
+- **Untrusted inventory (SEC-1).** Skill descriptions are treated as data, never instructions — a malicious skill description can't hijack the advisor.
+- **No silent auto-run (SEC-2).** Only a small, hardcoded allowlist of read-only skills may auto-run. Anything that changes state always asks you first.
+- **Loop-prevention (L1–L5).** Guards against the AI cascading "fix A → break B → fix B → break C" until your original goal is lost.
+- **Local-first.** The value log stays on your machine. No telemetry, no phone-home.
 
 ---
 
-## Contributing
+## Features
 
-This is an early-stage public repo. The v0 is being refined through real-world dogfooding before extraction into the standalone product. Contributions welcomed once v0.5 is reached (see roadmap above).
+| Capability | Status |
+|---|---|
+| Auto-discovers all installed skills each session | ✅ |
+| Proactive, one-at-a-time skill suggestions | ✅ |
+| Risk flags before destructive / unreviewed actions | ✅ |
+| Work-type classification (data, security, AI, design, growth, …) | ✅ |
+| Value log + `/skill-value` report (incl. near-misses caught) | ✅ |
+| Untrusted-data + auto-run-allowlist security guards | ✅ |
+| Loop-prevention discipline (L1–L5) | ✅ as guidance; L2/L5 hardening in code → next |
+| No-terminal install via marketplace + prebuilt code | ✅ |
+| Browser control panel + onboarding | ⏳ planned |
+| Auto-install skills you don't have yet | ⏳ planned |
 
-**Areas where input is especially valuable:**
+---
 
-- **Non-technical user feedback** — does the plain-language output actually help?
-- **Skill mappings** — if you use a skill we haven't captured, propose a trigger row via PR
-- **Edge cases** — situations where the advisor should fire but didn't, or vice versa
-- **Multi-platform reports** — does the discipline translate to Cursor/Continue/Aider?
+## What it is *not*
 
-For now, please open an Issue rather than a Pull Request — we want to align on direction before merging code.
+- ❌ Not a new AI model or a paid service — it rides the Claude you already have.
+- ❌ Not a data collector — nothing leaves your machine.
+- ❌ Not an autopilot — it suggests; you decide. State-changing skills always ask first.
+- ❌ Not a nag — it stays silent unless something genuinely fits, and respects "stop suggesting."
+
+---
+
+## FAQ
+
+**Does this cost anything or need an API key?**
+No. It uses the AI already running in your Claude Code session. No key, no added bill.
+
+**Does it send my code or prompts anywhere?**
+No. The only thing it writes is a local value log on your own machine.
+
+**Will it run skills without asking?**
+Only read-only, safe skills on a fixed allowlist may auto-run. Anything that changes things always asks first.
+
+**Do I need to configure which skills I have?**
+No — it discovers them automatically every session.
+
+**Which tools does it support?**
+Claude Code today. Other agents (Cursor, etc.) are a possible future direction.
+
+**How do I see what it's done for me?**
+Run `/skill-value` for a plain-language report (this session / today / this week).
+
+---
+
+## Limitations (honest)
+
+- It only knows the skills you actually have installed — it can't yet fetch ones you're missing (that's on the roadmap).
+- Suggestion quality depends on the in-session model reading the context well; it errs toward silence, so it will sometimes stay quiet when a skill could have helped.
+- Near-miss and suggestion tracking rely on the model emitting an internal marker; the deterministic skill-run log is exact, the semantic events are best-effort.
+- Built and tested primarily on Windows + Claude Code; broader environments are lightly exercised so far.
+
+---
+
+## Roadmap
+
+- ✅ Walking skeleton, installed-skill inventory, the advising brain
+- ✅ Value & near-miss log + `/skill-value`
+- ✅ No-terminal install (marketplace + prebuilt code)
+- ⏳ Harden the loop-prevention budget/cycle rails in code + multi-turn tests
+- ⏳ Onboarding + a browser control panel
+- ⏳ Find & one-tap-install trusted skills you don't have yet
 
 ---
 
 ## License
 
-**PolyForm Noncommercial 1.0.0** — see [LICENSE](LICENSE) for the legal text + [LICENSING.md](LICENSING.md) for a plain-English guide.
+**PolyForm Noncommercial 1.0.0** — see [LICENSE](LICENSE) and the plain-English [LICENSING.md](LICENSING.md).
 
-**Quick read:**
-- ✅ **Free for personal, educational, research, hobbyist, and non-profit use** — no payment, no agreement needed
-- 🤝 **Commercial use requires a separate agreement** — open a GitHub Issue and tag `@AmRaghuAkula` to start the conversation
-- 📜 **Drafted by a lawyer (Heather Meeker, Polyform Project)** — solid foundation, not a hand-rolled license
-
-This is a **fair-source** model — increasingly common in OSS since 2023 (used by HashiCorp, Sentry, Elastic, and others). It keeps the community-good mission intact while funding sustainability through commercial agreements.
+- ✅ **Free** for personal, educational, research, hobbyist, and non-profit use — no payment, no agreement.
+- 🤝 **Commercial use needs a separate agreement** — open a GitHub Issue and tag `@AmRaghuAkula` to start.
+- 📜 A lawyer-drafted fair-source license (PolyForm, by Heather Meeker), not a hand-rolled one.
 
 ---
 
 ## Maintainer
 
-Built by [@AmRaghuAkula](https://github.com/AmRaghuAkula), with the explicit goal of helping non-technical AI enthusiasts get more value from the AI coding ecosystem.
-
-Inspired by the recognition that **the right skill at the right moment is the difference between confident output and quiet anxiety** — and that recognition shouldn't require you to be a senior engineer.
+Built by [@AmRaghuAkula](https://github.com/AmRaghuAkula), to help non-technical AI enthusiasts get more out of the AI coding ecosystem — because the right skill at the right moment shouldn't require being a senior engineer.
