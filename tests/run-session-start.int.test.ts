@@ -27,4 +27,12 @@ describe("run-session-start wrapper (built)", () => {
     const out = execFileSync("node", [wrapper], { input: "", encoding: "utf8" });
     expect(out).toBe("");
   });
+
+  it("injects an absolute value-report CLI path pointing at the built CLI", () => {
+    const input = JSON.stringify({ session_id: "x", cwd: "/tmp/p", hook_event_name: "SessionStart" });
+    const out = execFileSync("node", [wrapper], { input, encoding: "utf8" });
+    const ctx = JSON.parse(out).hookSpecificOutput.additionalContext as string;
+    expect(ctx.toLowerCase()).toContain("value report");
+    expect(ctx).toMatch(/dist[\\/]report[\\/]cli\.js/); // tolerant of OS path separator
+  });
 });
