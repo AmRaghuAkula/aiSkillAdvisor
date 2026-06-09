@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>aiSkillAdvisor — LinkedIn carousel</title>
+<style>
+  :root{
+    --bg:#0A0A0F;
+    --panel:#0E0F17;
+    --ink:#F4F5FB;
+    --muted:#8A8FA3;
+    --violet:#7C6CFF;
+    --cyan:#36E0C8;
+    --line:rgba(255,255,255,.08);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{background:#05060a;color:var(--ink);
+    font-family:"Inter","Segoe UI",-apple-system,BlinkMacSystemFont,system-ui,sans-serif;
+    -webkit-font-smoothing:antialiased;}
+  .hint{max-width:1080px;margin:24px auto;color:#9aa0b4;font-size:15px;line-height:1.6;padding:0 16px}
+  .hint code{color:#36E0C8;background:#11131c;padding:2px 6px;border-radius:5px}
+  .deck{display:flex;flex-direction:column;align-items:center;gap:36px;padding:24px 16px 80px}
+
+  .slide{
+    position:relative;width:1080px;height:1350px;overflow:hidden;
+    background:
+      radial-gradient(1200px 700px at 88% -10%, rgba(124,108,255,.22), transparent 60%),
+      radial-gradient(900px 600px at -10% 110%, rgba(54,224,200,.12), transparent 60%),
+      var(--bg);
+    border:1px solid var(--line);border-radius:28px;
+    display:flex;flex-direction:column;justify-content:space-between;
+    padding:96px 88px;color:var(--ink);
+  }
+  /* faint grid texture */
+  .slide::before{content:"";position:absolute;inset:0;
+    background-image:linear-gradient(var(--line) 1px,transparent 1px),
+      linear-gradient(90deg,var(--line) 1px,transparent 1px);
+    background-size:60px 60px;opacity:.20;mask-image:radial-gradient(120% 90% at 70% 10%,#000 30%,transparent 75%);}
+  .slide > *{position:relative;z-index:1}
+
+  .eyebrow{display:inline-flex;align-items:center;gap:12px;
+    font-size:22px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--cyan)}
+  .eyebrow .dot{width:10px;height:10px;border-radius:50%;background:var(--cyan);box-shadow:0 0 18px var(--cyan)}
+
+  h1{font-size:104px;line-height:.98;font-weight:800;letter-spacing:-.02em}
+  h2{font-size:78px;line-height:1.04;font-weight:800;letter-spacing:-.015em}
+  .grad{background:linear-gradient(100deg,var(--violet),var(--cyan));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .lead{font-size:42px;line-height:1.32;color:#D7D9E6;font-weight:500}
+  .muted{color:var(--muted)}
+  .big-name{font-size:120px;font-weight:800;letter-spacing:-.03em;line-height:1}
+  .mark-arrow{color:var(--violet)}
+
+  ul.points{list-style:none;display:flex;flex-direction:column;gap:30px;margin-top:14px}
+  ul.points li{display:flex;gap:24px;align-items:flex-start;font-size:40px;line-height:1.25;font-weight:600}
+  ul.points li .ic{font-size:40px;filter:saturate(1.2)}
+  ul.points li small{display:block;font-size:27px;font-weight:500;color:var(--muted);margin-top:4px}
+
+  .cmd{margin-top:8px;font-family:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+    font-size:34px;color:var(--cyan);background:#0c0e16;border:1px solid var(--line);
+    border-radius:16px;padding:26px 30px;display:inline-block}
+
+  .foot{display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--line);padding-top:34px}
+  .brand{display:flex;align-items:center;gap:18px;font-weight:800;font-size:34px;letter-spacing:-.01em}
+  .brand .glyph{width:46px;height:46px;border-radius:12px;
+    background:linear-gradient(135deg,var(--violet),var(--cyan));display:flex;align-items:center;justify-content:center;
+    color:#06070c;font-size:30px;font-weight:900}
+  .count{color:var(--muted);font-size:30px;font-weight:700;letter-spacing:.1em}
+  .swipe{color:var(--cyan);font-size:34px;font-weight:700}
+
+  .stack{display:flex;flex-direction:column;gap:34px}
+  .kicker{font-size:46px;font-weight:700;color:#fff}
+  .hr{height:1px;background:var(--line);margin:6px 0}
+
+  @media print{
+    @page{size:1080px 1350px;margin:0}
+    html,body{background:#fff}
+    .hint{display:none}
+    .deck{gap:0;padding:0}
+    .slide{border-radius:0;border:none;break-after:page;page-break-after:always}
+  }
+</style>
+</head>
+<body>
+  <div class="hint">
+    LinkedIn carousel · 1080×1350 (4:5). To publish: <b>screenshot each slide</b> (zoom so one fills the screen) and upload as images, or <b>Ctrl/Cmd+P → Save as PDF</b> and post it as a LinkedIn document. Slides below ↓
+  </div>
+
+  <div class="deck">
+
+    <!-- SLIDE 1 — HOOK -->
+    <section class="slide">
+      <div class="eyebrow"><span class="dot"></span>Built with AI · for people who build with AI</div>
+      <div class="stack">
+        <h1>I'm an AI<br>enthusiast,<br><span class="grad">not a developer.</span></h1>
+        <p class="lead">And I just realized I've been leaving free upside on the table.<br><span class="muted">Every. Single. Day.</span></p>
+      </div>
+      <div class="foot">
+        <div class="brand"><span class="glyph">▲</span> aiSkillAdvisor</div>
+        <div class="swipe">swipe →</div>
+      </div>
+    </section>
+
+    <!-- SLIDE 2 — THE GAP -->
+    <section class="slide">
+      <div class="eyebrow"><span class="dot"></span>The hidden tax</div>
+      <div class="stack">
+        <h2>Your AI already has<br><span class="grad">100+ skills.</span></h2>
+        <p class="lead">Skills that make what you build <b>faster, cleaner, more resilient.</b></p>
+        <div class="hr"></div>
+        <p class="lead">The capability is already there.<br>The <b style="color:#fff">knowing</b> — and the <b style="color:#fff">remembering</b> — isn't.</p>
+        <p class="lead muted">So the upside quietly slips away.</p>
+      </div>
+      <div class="foot">
+        <div class="brand"><span class="glyph">▲</span> aiSkillAdvisor</div>
+        <div class="count">2 / 3</div>
+      </div>
+    </section>
+
+    <!-- SLIDE 3 — THE FIX -->
+    <section class="slide">
+      <div class="eyebrow"><span class="dot"></span>The fix</div>
+      <div class="stack">
+        <div class="big-name">aiSkill<span class="grad">Advisor</span></div>
+        <p class="lead">Surfaces the right skill, at the right moment — so nothing useful stays hidden.</p>
+        <ul class="points">
+          <li><span class="ic">⚡</span><div>No API key, no cost<small>Runs on the AI you already have</small></div></li>
+          <li><span class="ic">🔒</span><div>100% local<small>No telemetry. Nothing leaves your machine.</small></div></li>
+          <li><span class="ic">🧩</span><div>Installs in 4 taps<small>Zero terminal</small></div></li>
+        </ul>
+        <div class="cmd">github.com/AmRaghuAkula/aiSkillAdvisor</div>
+      </div>
+      <div class="foot">
+        <div class="brand"><span class="glyph">▲</span> Free &amp; open · link in comments 👇</div>
+        <div class="count">3 / 3</div>
+      </div>
+    </section>
+
+  </div>
+</body>
+</html>

@@ -138,7 +138,7 @@ aiSkillAdvisor is a Claude Code plugin made of four lightweight hooks, a "brain"
 | Work-type classification (data, security, AI, design, growth, …) | ✅ |
 | Value log + `/skill-value` report (incl. near-misses caught) | ✅ |
 | Untrusted-data + auto-run-allowlist security guards | ✅ |
-| Loop-prevention discipline (L1–L5) | ✅ as guidance; L2/L5 hardening in code → next |
+| Loop-prevention: L2 budget + L5 cycle enforced in code (L1/L3/L4 as guidance) | ✅ |
 | No-terminal install via marketplace + prebuilt code | ✅ |
 | Browser control panel + onboarding | ⏳ planned |
 | Auto-install skills you don't have yet | ⏳ planned |
@@ -190,9 +190,11 @@ Run `/skill-value` for a plain-language report (this session / today / this week
 - ✅ Walking skeleton, installed-skill inventory, the advising brain
 - ✅ Value & near-miss log + `/skill-value`
 - ✅ No-terminal install (marketplace + prebuilt code)
-- ⏳ Harden the loop-prevention budget/cycle rails in code + multi-turn tests
+- ✅ Loop-prevention rails (L2 budget / L5 cycle) enforced in code + multi-turn eval
 - ⏳ Onboarding + a browser control panel
 - ⏳ Find & one-tap-install trusted skills you don't have yet
+
+See [`CHANGELOG.md`](CHANGELOG.md) for the full release history.
 
 ---
 
