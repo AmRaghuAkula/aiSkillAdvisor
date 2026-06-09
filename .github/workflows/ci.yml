@@ -15,4 +15,12 @@ jobs:
           cache: "npm"
       - run: npm ci
       - run: npm run build
+      - name: Verify committed dist/ matches source
+        run: |
+          if [ -n "$(git status --porcelain -- dist)" ]; then
+            echo "::error::dist/ is out of date — run 'npm run build' and commit dist/."
+            git --no-pager diff -- dist
+            git status --porcelain -- dist
+            exit 1
+          fi
       - run: npm test
