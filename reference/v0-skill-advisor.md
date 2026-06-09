@@ -57,8 +57,8 @@ These apply across ALL work-types and sections. They prevent the cascading-remed
 Before anything else: is the session working in one of these repos?
 
 - `~/Projects/MyProject (example — substitute your own paths)`
-- `C:\Users\raghu\Projects\the dogfood project-design-sandbox`
-- `C:\Users\raghu\Projects\the dogfood project-Pricing-Model`
+- `~/Projects/MyProject-design-sandbox`
+- `~/Projects/MyProject-Pricing-Model`
 
 **If none → advisor does NOT apply. Skip silently.**
 

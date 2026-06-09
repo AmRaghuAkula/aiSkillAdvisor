@@ -82,8 +82,8 @@ This document is the **canonical algorithm specification** for aiSkillAdvisor. I
 ```
 known_roots = [
     "~/Projects/MyProject",
-    "C:\Users\raghu\Projects\the dogfood project-design-sandbox",
-    "C:\Users\raghu\Projects\the dogfood project-Pricing-Model",
+    "~/Projects/MyProject-design-sandbox",
+    "~/Projects/MyProject-Pricing-Model",
     # (extensible — per-project profile defines this list)
 ]
 

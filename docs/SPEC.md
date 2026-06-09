@@ -368,7 +368,7 @@ manifest:
   schema_version: 1
   version: "1.0.0"
   generated_at: "2026-06-01"
-  author: "raghu"
+  author: "your-name"
   scope: "user"
 
 projects:
