@@ -515,9 +515,35 @@ void main();
 
 (Note: `resolveReportCliPath` is replaced by the generic `resolveDistFile`; behavior for the report path is unchanged — `tests/run-session-start.int.test.ts` still asserts the report path appears.)
 
-- [ ] **Step 6: Build + full suite.** `npm run build && npm test` — all pass (incl. the existing run-session-start integration test).
+- [ ] **Step 6: Add a runner integration test (the real wiring seam — eng-review add).** Append to `tests/run-session-start.int.test.ts`:
 
-- [ ] **Step 7: Commit** — `git add src/hooks/session-start.ts src/hooks/run-session-start.ts tests/session-start.test.ts && git commit -m "feat: SessionStart injects profile emphasis/nudge + tune CLI path"`
+```typescript
+import { mkdtempSync, rmSync, writeFileSync, mkdirSync } from "node:fs";
+import { tmpdir } from "node:os";
+
+it("injects the profile emphasis line from a seeded profile (built runner)", () => {
+  const dataDir = mkdtempSync(join(tmpdir(), "ad-"));
+  const workDir = mkdtempSync(join(tmpdir(), "aw-")); // no .git → projectKey === workDir
+  try {
+    writeFileSync(join(dataDir, "profiles.json"),
+      JSON.stringify({ [workDir]: { projectKey: workDir, emphasis: ["security"], sources: [], ts: "t" } }), "utf8");
+    const input = JSON.stringify({ session_id: "x", cwd: workDir, hook_event_name: "SessionStart" });
+    const out = execFileSync("node", [wrapper], {
+      input, encoding: "utf8", cwd: workDir,
+      env: { ...process.env, CLAUDE_PLUGIN_DATA: dataDir },
+    });
+    expect(JSON.parse(out).hookSpecificOutput.additionalContext.toLowerCase()).toContain("emphasizes security");
+  } finally {
+    rmSync(dataDir, { recursive: true, force: true });
+    rmSync(workDir, { recursive: true, force: true });
+  }
+});
+```
+(Add `join` to the existing `node:path` import if not already present.) This proves `run-session-start` → `projectKey` → `readProfile` → `profileNote` → injection works end-to-end, not just the pure builder.
+
+- [ ] **Step 7: Build + full suite.** `npm run build && npm test` — all pass (incl. both run-session-start integration tests).
+
+- [ ] **Step 8: Commit** — `git add src/hooks/session-start.ts src/hooks/run-session-start.ts tests/session-start.test.ts tests/run-session-start.int.test.ts && git commit -m "feat: SessionStart injects profile emphasis/nudge + tune CLI path"`
 
 ---
 
@@ -706,3 +732,27 @@ EOF
 **Type/name consistency:** `WORK_TYPES`/`WorkType`/`Profile`/`validateEmphasis` (Task 1) used by store (3), cli (4), session-start (5). `projectKey` (2) used by cli (4) + runner (5). `profileNote(Profile|undefined)` defined + tested (5), called in runner (5). `readProfile/writeProfile/dismiss` consistent across store + cli + runner. `resolveDistFile("report","cli.js")` preserves the existing report-path behavior the SP-LAUNCH int test checks. CLI flags `--emphasis`/`--sources` match between cli (4) and the command (6).
 
 **Known minor:** the runner now does a profile file read every SessionStart — tiny, wrapped in try/catch (fail-safe), negligible cost (one small JSON).
+
+---
+
+## GSTACK REVIEW REPORT
+
+| Review | Trigger | Why | Runs | Status | Findings |
+|--------|---------|-----|------|--------|----------|
+| Eng Review | `/plan-eng-review` | Architecture & tests (required) | 1 | clean (folded) | 1 security (→ cso), 1 test gap (folded) |
+| CSO | `/cso` | Untrusted-input security pass | 0 | PENDING (user-requested) | runs next, before build |
+
+**Step 0 (scope):** accepted — one cohesive `src/profile/` module; strong reuse (taxonomy, log-path, injected-CLI-path, eval harness); the CLI is justified (validation boundary the AI can't be trusted to enforce).
+
+**Findings & resolutions:**
+- **[P2] prompt-injection surface** (reading CLAUDE.md/README into the AI). Structurally contained: emphasis is whitelist-validated before storage + soft-lean only + SEC-2 unchanged + local. Stored→injected path verified clean (only whitelisted tokens reach context). **User chose a dedicated `cso` pass** before build (extra rigor) — runs next.
+- **[P2] test gap — runner wiring.** Added a `run-session-start` integration test (seed profile → built runner → assert emphasis line). Folded into Task 5 Step 6.
+- **4th-param vs churn:** the `profile?:{note?,cliPath?}` object is the right-sized diff (no SP-LAUNCH test churn) — kept.
+
+**Failure modes:** corrupt/missing profile → silent no-lean (fail-safe, tested); injection → bounded to a skewed soft-lean (no escalation). No silent critical gaps.
+
+**NOT in scope:** SP4b panel, muting, aggressiveness, global-memory inference, auto-decay, Signal-0 activation scope.
+
+**Parallelization:** sequential — Tasks 1–3 are a dependency chain (types→key→store), 4–5 depend on them; shared `src/profile/` + `dist/`.
+
+**VERDICT: ENG CLEARED — cso pass pending (user-requested) before implementation.**
