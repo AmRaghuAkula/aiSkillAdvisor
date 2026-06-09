@@ -4,6 +4,9 @@
 > An always-on advisor for Claude Code that watches what you're doing and suggests the installed skill that fits, flags risky moves before you make them, and quietly tracks the value it adds. Built for non-technical builders. Free for non-commercial use.
 
 [![License: PolyForm Noncommercial 1.0.0](https://img.shields.io/badge/license-PolyForm--NC--1.0.0-blue.svg)](LICENSE)
+[![Privacy: local-first, no telemetry](https://img.shields.io/badge/privacy-local--first%20%C2%B7%20no%20telemetry-2ea44f.svg)](#privacy)
+
+> 🔒 **Privacy promise.** aiSkillAdvisor is local-first and sends **nothing, anywhere** — no telemetry, no analytics, no phone-home. The source contains no network code at all; the only thing it writes is a local log on your own machine. Don't take my word for it — there isn't a single `fetch` or `http` call in the repo. [More below ↓](#privacy)
 
 ---
 
@@ -190,6 +193,18 @@ Run `/skill-value` for a plain-language report (this session / today / this week
 - ⏳ Harden the loop-prevention budget/cycle rails in code + multi-turn tests
 - ⏳ Onboarding + a browser control panel
 - ⏳ Find & one-tap-install trusted skills you don't have yet
+
+---
+
+## Privacy
+
+aiSkillAdvisor is **local-first by design** and makes **zero network calls.**
+
+- **No telemetry, no analytics, no phone-home.** It never reports usage, installs, or anything else back to anyone — including the author. Install it, and no one (me included) can see that you did.
+- **Nothing leaves your machine.** Your prompts, your code, and the value log all stay on your computer. The log lives under your local Claude data directory.
+- **Verifiable, not just promised.** The entire source imports only Node's local file/path modules — there is no HTTP client, socket, or analytics SDK anywhere in the codebase. Search the repo for `fetch` or `http`; you won't find a call.
+
+*(Because the project is hosted on public GitHub, GitHub itself shows the repo owner anonymous, aggregate traffic stats — clones and views. That's a standard GitHub feature for any public repo, it's not user-identifiable, and it's nothing the plugin does.)*
 
 ---
 
