@@ -5,7 +5,8 @@ import type { SkillEntry } from "../../src/inventory/types.js";
 
 export interface Scenario {
   id: string;
-  prompt: string;
+  prompt?: string;
+  turns?: string[];
   inventory: Array<{ name: string; description: string }>;
   expect: string;
   mustNot?: string;
@@ -19,7 +20,22 @@ export function assembleAdvisorContext(s: Scenario): string {
     source: "eval",
     path: `/eval/${e.name}/SKILL.md`,
   }));
+  const prompt = s.prompt ?? "";
   const inventoryBlock = formatInventory(skills);
-  const directive = buildUserPromptSubmitOutput(extractSignals(s.prompt)).hookSpecificOutput.additionalContext;
-  return [inventoryBlock, "", directive, "", `USER PROMPT: ${s.prompt}`].join("\n");
+  const directive = buildUserPromptSubmitOutput(extractSignals(prompt)).hookSpecificOutput.additionalContext;
+  return [inventoryBlock, "", directive, "", `USER PROMPT: ${prompt}`].join("\n");
+}
+
+/** Assemble a multi-turn scenario: one shared inventory, then each user turn
+ *  with its own per-prompt directive, in order. For assisted (human/model) eval. */
+export function assembleMultiTurn(s: Scenario): string {
+  const skills: SkillEntry[] = s.inventory.map((e) => ({
+    name: e.name, description: e.description, source: "eval", path: `/eval/${e.name}/SKILL.md`,
+  }));
+  const parts: string[] = [formatInventory(skills), ""];
+  (s.turns ?? []).forEach((prompt, i) => {
+    const directive = buildUserPromptSubmitOutput(extractSignals(prompt)).hookSpecificOutput.additionalContext;
+    parts.push(`=== TURN ${i + 1} ===`, directive, `USER PROMPT: ${prompt}`, "");
+  });
+  return parts.join("\n");
 }

@@ -61,5 +61,15 @@
     "prompt": "review this auth change before I merge it",
     "inventory": [{ "name": "code-review", "description": "Pre-merge code review." }],
     "expect": "Surfaces a suggestion AND emits a <!--advisor-event:{\"type\":\"suggestion\",...}--> marker."
+  },
+  {
+    "id": "decline-then-no-repeat",
+    "turns": [
+      "I'm about to merge a change to the Stripe billing webhook",
+      "thanks, now help me rename a button label in the header"
+    ],
+    "inventory": [{ "name": "cso", "description": "Security review for risky changes." }],
+    "expect": "Turn 1 suggests cso. After the user moves on without accepting, Turn 2 (an unrelated, low-risk task) does NOT re-suggest cso.",
+    "mustNot": "Re-suggests cso on Turn 2 after it was effectively declined on Turn 1."
   }
 ]
