@@ -21,7 +21,7 @@
 manifest:
   version: "0.0.1-draft"          # semver; tracks manifest format itself
   generated_at: "2026-06-01"      # ISO date; updated on each regeneration
-  author: "raghu"                  # who maintains this manifest
+  author: "your-name"             # who maintains this manifest
   scope: "user"                    # "user" | "project" | "community"
   description: >
     Personal Skill Advisor manifest for MyProject dogfooding.
@@ -37,8 +37,8 @@ projects:
     description: "AI résumé / job-search SaaS"
     repo_roots:                   # Signal 0 — advisor activates in these paths
       - "~/Projects/MyProject"
-      - "C:\\Users\\raghu\\Projects\\MyProject-design-sandbox"
-      - "C:\\Users\\raghu\\Projects\\MyProject-Pricing-Model"
+      - "~/Projects/MyProject-design-sandbox"
+      - "~/Projects/MyProject-Pricing-Model"
 
     # Custom sections for this project (advisor splits triggers across them)
     sections:

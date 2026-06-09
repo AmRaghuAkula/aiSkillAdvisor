@@ -142,7 +142,7 @@ Per the founder's explicit instructions and per the v0 discipline:
 | Anti-pattern | Why to avoid |
 |---|---|
 | **Don't start v1 extraction before 3 pilot validations** | We have a paper design that passed synthetic tests but ZERO real-work evidence. Premature extraction risks building the wrong abstraction. |
-| **Don't touch the live the dogfood project v0 memory file from this repo** | The file at `C:\Users\raghu\.claude\projects\....\memory\feedback_proactive_skill_advisor.md` is the LIVE instance. This repo holds COPIES for handoff context. Edits to v0 happen in the memory directory; this repo logs them after the fact. |
+| **Don't touch the live the dogfood project v0 memory file from this repo** | The file at `~/.claude/projects/<project>/memory/feedback_proactive_skill_advisor.md` is the LIVE instance. This repo holds COPIES for handoff context. Edits to v0 happen in the memory directory; this repo logs them after the fact. |
 | **Don't add features the v0 doesn't have yet** | The standalone product should be the v0 abstraction first, additions second. If a feature didn't exist in dogfooding, it hasn't been validated. |
 | **Don't pivot scope without founder approval** | The founder explicitly anchored this as "non-technical AI enthusiasts" focus. Don't broaden to "all builders" without explicit re-anchor. |
 | **Don't merge contributions before v0.5** | Per README — open Issues yes, PRs no, until v0.5 is reached |
