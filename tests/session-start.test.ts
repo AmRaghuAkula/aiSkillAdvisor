@@ -1,5 +1,6 @@
 import { describe, it, expect } from "vitest";
-import { buildSessionStartOutput, ADVISOR_MARKER } from "../src/hooks/session-start.js";
+import { buildSessionStartOutput, ADVISOR_MARKER, profileNote } from "../src/hooks/session-start.js";
+import type { Profile } from "../src/profile/types.js";
 
 describe("buildSessionStartOutput", () => {
   it("injects the provided inventory block and the marker", () => {
@@ -36,5 +37,37 @@ describe("buildSessionStartOutput", () => {
       undefined,
     );
     expect(out.hookSpecificOutput.additionalContext.toLowerCase()).not.toContain("value report");
+  });
+});
+
+describe("profileNote", () => {
+  const base: Profile = { projectKey: "/p", emphasis: [], sources: [], ts: "t" };
+  it("emphasis present → a soft-lean hint naming the work-types", () => {
+    const note = profileNote({ ...base, emphasis: ["security", "data"] });
+    expect(note?.toLowerCase()).toContain("security");
+    expect(note?.toLowerCase()).toContain("never suppress");
+  });
+  it("no profile → the /advisor-tune nudge", () => {
+    expect(profileNote(undefined)?.toLowerCase()).toContain("/advisor-tune");
+  });
+  it("dismissed → no note (silent)", () => {
+    expect(profileNote({ ...base, dismissed: true })).toBeUndefined();
+  });
+  it("PROFILE-3: injects ONLY emphasis, never the sources field", () => {
+    const note = profileNote({ ...base, emphasis: ["security"], sources: ["SECRET-SOURCE-NAME"] });
+    expect(note).not.toContain("SECRET-SOURCE-NAME");
+  });
+});
+
+describe("buildSessionStartOutput profile", () => {
+  it("injects the profile note + tune CLI path when provided", () => {
+    const out = buildSessionStartOutput(
+      { session_id: "t", cwd: "/p", hook_event_name: "SessionStart" },
+      undefined, undefined,
+      { note: "Profile: this project emphasizes security.", cliPath: "/x/dist/profile/cli.js" },
+    );
+    const ctx = out.hookSpecificOutput.additionalContext;
+    expect(ctx).toContain("emphasizes security");
+    expect(ctx).toContain("/x/dist/profile/cli.js");
   });
 });

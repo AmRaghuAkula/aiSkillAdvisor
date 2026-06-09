@@ -1,17 +1,27 @@
 import type { SessionStartHookInput, HookOutput } from "../types.js";
+import type { Profile } from "../profile/types.js";
 
 export const ADVISOR_MARKER = "aiSkillAdvisor active";
 
-/**
- * Build the SessionStart hook output. `inventoryBlock` is the pre-formatted,
- * sanitized, untrusted-wrapped inventory string (see inventory/format.ts).
- * `reportCliPath` is the absolute path to the value-report CLI, resolved by
- * the runner; when present it is injected into context so /skill-value works.
- */
+/** The soft-lean hint / first-run nudge / silence, from the project's profile. */
+export function profileNote(p: Profile | undefined): string | undefined {
+  if (!p) {
+    return "No profile yet for this project — you may offer the /advisor-tune command once " +
+      "(it tunes suggestions for this project). Don't re-offer if declined.";
+  }
+  if (p.emphasis && p.emphasis.length > 0) {
+    return `Profile: this project emphasizes ${p.emphasis.join(", ")}. Lean toward matching ` +
+      `skills first when choosing what to surface; never suppress a clearly-fitting skill ` +
+      `outside the emphasis (the open-world rule still wins).`;
+  }
+  return undefined; // dismissed or empty → silent
+}
+
 export function buildSessionStartOutput(
   input: SessionStartHookInput,
   inventoryBlock?: string,
   reportCliPath?: string,
+  profile?: { note?: string; cliPath?: string },
 ): HookOutput {
   const cwd = typeof input.cwd === "string" && input.cwd ? input.cwd : "(unknown)";
   const intro =
@@ -23,12 +33,17 @@ export function buildSessionStartOutput(
       ? ` To run the value report (the /skill-value command), execute with Node: ` +
         `node "${reportCliPath}".`
       : "";
+  const tune =
+    profile && typeof profile.cliPath === "string" && profile.cliPath
+      ? ` To set/clear this project's profile (the /advisor-tune command), run: ` +
+        `node "${profile.cliPath}" set --emphasis <comma,types> | node "${profile.cliPath}" dismiss.`
+      : "";
+  const note = profile && typeof profile.note === "string" && profile.note ? ` ${profile.note}` : "";
   const block = typeof inventoryBlock === "string" && inventoryBlock ? `\n\n${inventoryBlock}` : "";
   return {
     hookSpecificOutput: {
-      // Hardcoded: this builder serves the single SessionStart event we wire.
       hookEventName: "SessionStart",
-      additionalContext: `${intro}${report}${block}`,
+      additionalContext: `${intro}${report}${tune}${note}${block}`,
     },
   };
 }
