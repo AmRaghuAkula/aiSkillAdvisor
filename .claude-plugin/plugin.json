@@ -2,7 +2,7 @@
   "name": "ai-skill-advisor",
   "displayName": "aiSkillAdvisor",
   "description": "Always-on advisor that suggests the right Claude Code skill at the right moment.",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "author": {
     "name": "Raghu Akula",
     "url": "https://github.com/AmRaghuAkula"

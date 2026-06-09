@@ -1,6 +1,6 @@
 {
   "name": "ai-skill-advisor",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Always-on advisor that suggests the right Claude Code skill at the right moment.",
   "type": "module",
   "private": true,
