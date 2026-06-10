@@ -3,6 +3,14 @@
 All notable changes to aiSkillAdvisor are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/); versions follow [SemVer](https://semver.org/).
 
+## [0.3.0] — 2026-06-09
+
+### Added
+- **Per-project onboarding.** `/advisor-tune` infers this project's work-type emphasis from sources you approve (consent-gated), confirms, and saves a local profile. A one-line first-run nudge points to it. Suggestions then lean toward what matters here (soft — never suppresses a fitting skill). 100% local; the profile stores work-type tags + source names only.
+
+### Security
+- Emphasis is re-validated against the work-type whitelist at read time, so a hand-edited or corrupt profile can never inject text into session context (PROFILE-1). `/advisor-tune` treats read files as untrusted data with bounded side effects.
+
 ## [0.2.0] — 2026-06-09
 
 ### Fixed
