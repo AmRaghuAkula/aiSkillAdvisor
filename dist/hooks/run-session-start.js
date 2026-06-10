@@ -1,18 +1,14 @@
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
-import { buildSessionStartOutput } from "./session-start.js";
+import { buildSessionStartOutput, profileNote } from "./session-start.js";
 import { sweepInventory } from "../inventory/sweep.js";
 import { formatInventory } from "../inventory/format.js";
-/**
- * Absolute path to the bundled value-report CLI. Prefer CLAUDE_PLUGIN_ROOT (set
- * for hooks); fall back to this file's own location (dist/hooks/ -> plugin root).
- * Robust whether installed via marketplace or loaded with --plugin-dir.
- */
-function resolveReportCliPath() {
+import { readProfile } from "../profile/store.js";
+import { projectKey } from "../profile/project-key.js";
+function resolveDistFile(...parts) {
     try {
-        const root = process.env.CLAUDE_PLUGIN_ROOT ??
-            join(dirname(fileURLToPath(import.meta.url)), "..", "..");
-        return join(root, "dist", "report", "cli.js");
+        const root = process.env.CLAUDE_PLUGIN_ROOT ?? join(dirname(fileURLToPath(import.meta.url)), "..", "..");
+        return join(root, "dist", ...parts);
     }
     catch {
         return undefined;
@@ -35,13 +31,19 @@ async function main() {
     }
     let block;
     try {
-        const inv = sweepInventory();
-        block = formatInventory(inv.skills);
+        block = formatInventory(sweepInventory().skills);
     }
     catch {
-        block = undefined; // never let inventory work crash the session
+        block = undefined;
     }
-    process.stdout.write(JSON.stringify(buildSessionStartOutput(input, block, resolveReportCliPath())));
+    let note;
+    try {
+        note = profileNote(readProfile(projectKey()));
+    }
+    catch {
+        note = undefined; // profile work must never crash the session
+    }
+    process.stdout.write(JSON.stringify(buildSessionStartOutput(input, block, resolveDistFile("report", "cli.js"), { note, cliPath: resolveDistFile("profile", "cli.js") })));
     process.exit(0);
 }
 void main();
