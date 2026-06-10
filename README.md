@@ -32,6 +32,7 @@ Once installed, aiSkillAdvisor rides along in every Claude Code session and:
 - 💡 **Suggests the right skill, one at a time.** When your request clearly matches a skill, it surfaces a single plain-language nudge: *"Skill suggestion: `cso` — a security review before this billing change. Want me to run it?"*
 - 🛑 **Flags risky moments.** About to push straight to production, merge without review, or do something destructive? It raises a risk flag **before** it happens.
 - 🧮 **Tracks its own value.** A local log records suggestions made, accepted, declined — and especially **near-misses caught** (risky actions it flagged). Run `/skill-value` any time to see it.
+- 🎚️ **Tunes to your project.** Run `/advisor-tune` and it reads only what *you* approve (this project's `CLAUDE.md`, README, structure), figures out what the project is about, and leans its suggestions accordingly — a soft lean that never hides a fitting skill.
 - 🤫 **Stays quiet when nothing fits.** It defaults to silence. No nagging, no stacking suggestions, and it never re-suggests something you declined.
 
 It runs **on the AI already in your session** — no API key, no extra cost, and **nothing ever leaves your machine.**
@@ -140,7 +141,8 @@ aiSkillAdvisor is a Claude Code plugin made of four lightweight hooks, a "brain"
 | Untrusted-data + auto-run-allowlist security guards | ✅ |
 | Loop-prevention: L2 budget + L5 cycle enforced in code (L1/L3/L4 as guidance) | ✅ |
 | No-terminal install via marketplace + prebuilt code | ✅ |
-| Browser control panel + onboarding | ⏳ planned |
+| Per-project tuning — `/advisor-tune` infers your project's focus (consent-gated) | ✅ |
+| Browser control panel | ⏳ planned |
 | Auto-install skills you don't have yet | ⏳ planned |
 
 ---
@@ -168,6 +170,9 @@ Only read-only, safe skills on a fixed allowlist may auto-run. Anything that cha
 **Do I need to configure which skills I have?**
 No — it discovers them automatically every session.
 
+**Can I tune it for a specific project?**
+Yes — run `/advisor-tune`. It reads only the sources you approve, infers what the project is about, confirms with you, and then leans its suggestions toward what matters here (a soft lean — it never hides a fitting skill). 100% local.
+
 **Which tools does it support?**
 Claude Code today. Other agents (Cursor, etc.) are a possible future direction.
 
@@ -191,7 +196,8 @@ Run `/skill-value` for a plain-language report (this session / today / this week
 - ✅ Value & near-miss log + `/skill-value`
 - ✅ No-terminal install (marketplace + prebuilt code)
 - ✅ Loop-prevention rails (L2 budget / L5 cycle) enforced in code + multi-turn eval
-- ⏳ Onboarding + a browser control panel
+- ✅ Smart onboarding + per-project tuning (`/advisor-tune`)
+- ⏳ Browser control panel (see & tune the advisor visually)
 - ⏳ Find & one-tap-install trusted skills you don't have yet
 
 See [`CHANGELOG.md`](CHANGELOG.md) for the full release history.
