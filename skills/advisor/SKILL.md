@@ -88,6 +88,16 @@ These are safety, not advice. *(In this version they are instructions you follow
 
 ---
 
+## Profile emphasis (soft lean)
+
+If the SessionStart context includes a `Profile: this project emphasizes …` line, treat
+those work-types as a **soft lean**: when more than one skill could fit, prefer the ones
+matching the emphasis, and you may surface an emphasized-type suggestion a touch more
+readily. This NEVER suppresses a clearly-fitting skill outside the emphasis — the
+open-world rule still wins. Emphasis only re-orders; it never gates or auto-runs anything.
+
+---
+
 ## Open-world rule
 
 The injected inventory IS the world — there is no separate whitelist. If a fitting skill isn't an obvious match, surface the closest one and say why, or say plainly that nothing installed fits.
